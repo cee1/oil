@@ -1,0 +1,130 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+# Distributed under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+
+import sys, re, os.path
+from getopt import gnu_getopt, GetoptError
+
+class OilIniSyntaxError (Exception):
+    pass
+
+def parse_ini (ini_fpath):
+    ini = open (ini_fpath, 'r')
+    
+    line_no = 0
+    current_section = ""
+    ret = {}
+    for l in ini:
+        line_no += 1
+        
+        line = l.strip ()
+        
+        if not line or line[0] == '#':
+            continue
+        elif line[0] == '[':
+            if line[-1] != ']':
+                raise OilIniSyntaxError, '%s:%d "%s", section not end with "]"' % (ini_fpath, line_no, line)
+            current_section = line[1:-1].strip ()
+        else:
+            if current_section != 'include':
+                try:
+                    k, v = line.split ('=', 1)
+                except ValueError:
+                    raise OilIniSyntaxError, '%s:%d "%s", key=value line should have "="' % (ini_fpath, line_no, line)
+                
+                try:
+                    cls, impl = k.rsplit ('.', 1)
+                except ValueError:
+                    raise OilIniSyntaxError, '%s:%d "%s", key should be the form of "function_class.implement"' % (ini_fpath, line_no, line)
+                
+                k, v, cls, impl = map (str.strip, (k, v, cls, impl))
+                
+                funcls = ret.get (cls, {})
+                funcls[impl] = (current_section, v)
+                ret[cls] = funcls
+            else:
+                inc_path = line
+                if not os.path.isabs (inc_path):
+                    inc_path = os.path.join (os.path.dirname (ini_fpath), inc_path)
+                    
+                ret.update (parse_ini (inc_path))
+    
+    return ret
+
+def gen (ini, name, output):
+    header = """#include <oilcore.h>
+void %s_register_implements ()
+{
+    OilClass *cls;
+""" % name
+
+    tail = """
+}
+"""
+    output.write (header)
+
+    for funcls in ini:
+        output.write ('\n    cls = oil_class_get ("%s");' % funcls)
+        for i in ini[funcls]:
+            flags, impl = ini[funcls][i]
+            output.write ("""
+    extern void %s ();
+    oil_class_add_implement (cls, "%s", (void *) %s, %s);
+""" % (impl, i, impl, flags))
+    
+    output.write (tail)
+    output.flush ()
+
+def gen_canonical_id (raw):
+    if not re.compile ('^\w+$').match (raw):
+        ret = b64encode (raw, '__')
+        ret = ret.replace ('=', '_')
+    else:
+        ret = raw
+    
+    return ret
+
+if __name__ == '__main__':
+    usage = """usage: %s [--force] <implement_registration>\n
+output: <implement_registration>_register_implements.c"""
+
+    try:
+        opts, left = gnu_getopt (sys.argv[1:], 'fh', ['force', 'help'])
+    except GetoptError:
+        print usage % sys.argv[0]
+        sys.exit (-1)
+    
+    opts = [o[0] for o in opts]
+    if '-f' in opts or '--force' in opts:
+        overwrite = True
+    else:
+        overwrite = False
+    
+    if '-h' in opts or '--help' in opts or len (left) != 1:
+        print usage % sys.argv[0]
+        sys.exit (0)
+
+    #import pdb
+    #pdb.set_trace ()
+    try:
+        reg = left[0]
+        fn = os.path.splitext (reg)[0]
+        output_fpath = fn + '_register_implements.c'
+
+        if not overwrite:
+            if os.path.lexists (output_fpath):
+                raise IOError, 'Failed to gen file "%s": already exists' % output_fpath
+
+        output = open (output_fpath, 'w')
+
+        ini = parse_ini (reg)
+        gen (ini, gen_canonical_id (fn), output)
+    except KeyboardInterrupt:
+        print 'Bye'
+        sys.exit (0)
+    except IOError:
+        sys.exit ('[IOError] %s' % sys.exc_info ()[1])
+    except OilIniSyntaxError:
+        sys.exit ('[SyntaxError] %s' % sys.exc_info ()[1])

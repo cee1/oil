@@ -1,0 +1,7 @@
+Name: OilFuncs Uninstalled
+Description: Oil Pre-defined Functions & their loaders, Not Installed
+Version: @OIL_VERSION@
+Requires.private: oilcore-@OIL_MAJOR_VERSION@.@OIL_MINOR_VERSION@-uninstalled = @OIL_VERSION@
+Libs: ${pc_top_builddir}/${pcfiledir}/oilfuncs/liboilfuncs-@OIL_MAJOR_VERSION@.@OIL_MINOR_VERSION@.la
+Cflags: -I${pc_top_builddir}/${pcfiledir}/@srcdir@/oilfuncs
+

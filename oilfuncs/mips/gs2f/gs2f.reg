@@ -1,0 +1,3 @@
+[OIL_FLAG (OIL_FLAGBIT_GS2F)]
+oil_copy8x8_u8.gs2f = oil_copy8x8_u8_gs2f
+

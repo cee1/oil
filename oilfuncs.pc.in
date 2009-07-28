@@ -1,0 +1,12 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@/oil
+
+Name: OilFuncs
+Description: Oil Pre-defined Functions & their loaders
+Requires.private: oilcore-@OIL_MAJOR_VERSION@.@OIL_MINOR_VERSION@ = @OIL_VERSION@
+Version: @OIL_VERSION@
+Libs: -L${libdir} -loilfuncs-@OIL_MAJOR_VERSION@.@OIL_MINOR_VERSION@
+Cflags: -I${includedir}
+

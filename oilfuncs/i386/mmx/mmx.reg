@@ -1,0 +1,3 @@
+[OIL_FLAG (OIL_FLAGBIT_i386_MMX)]
+oil_copy8x8_u8.mmx = oil_copy8x8_u8_mmx
+

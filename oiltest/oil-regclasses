@@ -1,0 +1,388 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+# Distributed under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+
+import sys, re, os.path
+from base64 import b64encode
+from getopt import gnu_getopt, GetoptError
+
+supported_types_base = {
+    'int':          'p',
+    'int8_t':       'p',
+    'uint8_t':      'p',
+    'int16_t':      'p',
+    'uint16_t':     'p',
+    'int32_t':      'p',
+    'uint32_t':     'p',
+    'int64_t':      'i64',
+    'uint64_t':     'i64',
+    'float':        'f64',
+    'double':       'f64',
+}
+
+h_header = """/*
+ * %(def_name)s.h:
+ *  Auto generate from %(def_file)s
+ *  It will be rewritten next time run oil-genclasses
+ */
+
+#ifndef __%(def_name_upper)s_H__
+#define __%(def_name_upper)s_H__
+
+#include <inttypes.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+"""
+h_line = """
+/*
+ * %(cls_name)s:
+ *   %(def_file)s:%(lineno)d 
+ *   %(def)s
+ */
+extern void (*%(cls_name)s) (%(param_list)s);
+"""
+h_tail = """
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* __%(def_name_upper)s__ */
+
+"""
+
+h_marshal_header = """/* 
+ * %(def_name)s_marshal.h:
+ *  Auto generate from %(def_file)s
+ *  It will be rewritten next time run oil-regclasses
+ *  
+ *  declares marshal functions for auto testing
+ */
+
+#ifndef __%(def_name_upper)s_MARSHAL_H__
+#define __%(def_name_upper)s_MARSHAL_H__
+
+#include <inttypes.h>
+#include <oilparameter.h>
+#include <oilprofiler.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+"""
+h_marshal_line = """
+void %(marshal)s (void *func, OilGenericType *args, OilProfiler *profiler);
+"""
+h_marshal_tail = """
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* __%(def_name_upper)s_MARSHAL_H__ */
+
+"""
+
+
+c_header = """/* 
+ * %(def_name)s.c:
+ *  Auto generate from %(def_file)s
+ *  It will be rewritten next time run oil-regclasses
+ *  
+ *  declares public function pointers
+ */
+#include <inttypes.h>
+"""
+c_line = """
+/*
+ * %(cls_name)s:
+ *   %(def_file)s:%(lineno)d
+ *   %(def)s
+ */
+void (*%(cls_name)s) (%(param_list)s);
+
+"""
+c_tail = "\n"
+
+c_marshal_header = """/* 
+ * %(def_name)s_marshal.c:
+ *  Auto generate from %(def_file)s
+ *  It will be rewritten next time run oil-regclasses
+ * 
+ *  declares marshal functions for auto testing
+ */
+ 
+#include "%(def_name)s_marshal.h"
+"""
+c_marshal_line = """
+void %(marshal)s (void *func, OilGenericType *args, OilProfiler *profiler)
+{
+    typedef void (*prototype) (%(marshal_t)s);
+    prototype _f = (prototype) func;
+%(cvt_args)s
+    profiler->start (profiler);
+    _f (%(args_list)s);
+    profiler->stop (profiler);
+}
+"""
+c_marshal_tail = "\n"
+
+c_register_classes_header = """/* 
+ * %(def_name)s_register_classes.c:
+ *  Auto generate from %(def_file)s
+ *  It will be rewritten next time run oil-regclasses
+ *  Generate the class registration function
+ */
+#include <oilclass.h>
+#include <inttypes.h>
+void %(def_name)s_register_classes ()
+{
+"""
+c_register_classes_line = """
+    extern void %(cls_name)s_ref (%(param_list)s);
+    extern void (*%(cls_name)s) (%(param_list)s);
+    oil_class_register ("%(cls_name)s", %(cls_name)s_ref, (void **) & %(cls_name)s);
+"""
+c_register_classes_tail = """
+}
+"""
+
+c_attach_classes_header = """/* 
+ * %(def_name)s_attach_classes.c:
+ *  Auto generate from %(def_file)s
+ *  It will be rewritten next time run oil-regclasses
+ *  Generate function that attaching class_data to classes
+ */
+#include <oiltester.h>
+#include <oilchecker.h>
+#include <oilprofiler.h>
+#include "%(def_name)s_marshal.h"
+
+void %(def_name)s_attach_classes ()
+{
+"""
+c_attach_classes_line = """
+    oil_test_attach_class_full ("%(cls_name)s", "%(param_list)s", %(marshal)s, &oil_checker_default, &oil_profiler_default);
+"""
+c_attach_classes_tail = """
+}
+"""
+
+class OilSyntaxError (Exception):
+    pass
+
+class parser (object):
+    word = '[_a-zA-Z]\w*'
+    sep = '[ \n]+'
+    pad = '[ \t]*'
+    
+    def __init__ (self, definition, overwrite = False):
+        self.src_file = definition
+        self.fn = os.path.splitext (definition)[0]
+        self.dst_c = self.fn + '.c'
+        self.dst_h = self.fn + '.h'
+        self.dst_rcc = self.fn + '_register_classes.c'
+        self.dst_acc = self.fn + '_attach_classes.c'
+        
+        self.dst_mh = self.fn + '_marshal.h'
+        self.dst_mc = self.fn + '_marshal.c'
+        
+        if not overwrite:
+            for f in (self.dst_c, self.dst_rcc, self.dst_acc, self.dst_mh, self.dst_mc):
+                if os.path.lexists (f):
+                    raise IOError, 'Failed to gen file "%s": already exists' % f
+        
+        self._in = open (self.src_file, 'r')
+        self._out_c = open (self.dst_c, 'w')
+        self._out_h = open (self.dst_h, 'w')
+        self._out_rcc = open (self.dst_rcc, 'w')
+        self._out_acc = open (self.dst_acc, 'w')
+        
+        self._out_mh = open (self.dst_mh, 'w')
+        self._out_mc = open (self.dst_mc, 'w')
+        self.lineno = 0
+        self.line = ''
+    
+    def parse (self):
+        tmpl_args = {
+            'def_file': self.src_file,
+            'def_name': self.gen_canonical_id (self.fn),
+            'def_name_upper': self.gen_canonical_id (self.fn).upper ()
+        }
+        all_marshals = set ()
+        
+        self._out_c.write (c_header % tmpl_args)
+        self._out_h.write (h_header % tmpl_args)
+        self._out_rcc.write (c_register_classes_header % tmpl_args)
+        self._out_acc.write (c_attach_classes_header % tmpl_args)
+        
+        self._out_mh.write (h_marshal_header % tmpl_args)
+        self._out_mc.write (c_marshal_header % tmpl_args)
+        
+        for line in self._in:
+            self.lineno += 1
+            self.line = line.strip ()
+            
+            if not self.line or self.line[0] == '#':
+                continue
+            
+            cls_name, params = self.__parse_prototype ()
+            prototype = tuple ([p[0] for p in params])
+            all_marshals.add (prototype)
+            
+            tmpl_args['lineno'] = self.lineno
+            tmpl_args['def'] = self.line
+            tmpl_args['cls_name'] = cls_name
+            tmpl_args['param_list'] = ', '.join (['%s %s' % (p[0], p[1]) for p in params])
+            tmpl_args['marshal'] = 'OIL_MARSHAL__%s' % '_'.join (prototype).upper ().replace (' *', 'p').replace (' ', '_')
+            
+            self._out_c.write (c_line % tmpl_args)
+            self._out_h.write (h_line % tmpl_args)
+            self._out_rcc.write (c_register_classes_line % tmpl_args)
+            self._out_acc.write (c_attach_classes_line % tmpl_args)
+        
+        for prototype in all_marshals:
+            tmpl_args['marshal'] = 'OIL_MARSHAL__%s' % '_'.join (prototype).upper ().replace (' *', 'p').replace (' ', '_')
+            tmpl_args['marshal_t'] = ', '.join (prototype)
+            
+            tmp = ''
+            for i in xrange (len (prototype)):
+                p = prototype[i]
+                tmp += '    %s _%d = (%s) (args + %d)->%s;\n' % (p, i, p, i, supported_types_base.get(p, 'p'))
+            
+            tmpl_args['cvt_args'] = tmp
+            tmpl_args['args_list'] = ', '.join (('_%d' %i for i in xrange (len (prototype))))
+            
+            self._out_mh.write (h_marshal_line % tmpl_args)
+            self._out_mc.write (c_marshal_line % tmpl_args)
+        
+        self._out_c.write (c_tail % tmpl_args)
+        self._out_h.write (h_tail % tmpl_args)
+        self._out_rcc.write (c_register_classes_tail % tmpl_args)
+        self._out_acc.write (c_attach_classes_tail % tmpl_args)
+
+        self._out_mh.write (h_marshal_tail % tmpl_args)
+        self._out_mc.write (c_marshal_tail % tmpl_args)
+
+        self._out_c.flush ()
+        self._out_h.flush ()
+        self._out_rcc.flush ()
+        self._out_acc.flush ()
+        self._out_mh.flush ()
+        self._out_mc.flush ()
+        
+    def __parse_prototype (self):
+        ret = '(?P<ret>%s)' % self.word
+        qual = '(?P<qual>%s%s)*' % (self.word, self.sep)
+        starsep = '(?:%s(?P<star>\*+)%s|%s)' % (self.pad, self.pad, self.sep)
+        func_name = '(?P<func_name>%s)' % self. word
+        param_list = '\((?P<param_list>.*)\)'
+        end = '%s(?:;%s)?' % (self.pad, self.pad)
+        
+        pattern = '^' + self.pad + '(%s%s%s)?' % (qual, ret, starsep) + func_name + self.pad + param_list + end + '$'
+        prototype = re.compile (pattern)
+
+        m = prototype.match (self.line)
+        if not m:
+            raise OilSyntaxError, '(%s:%d)Bad prototype "%s"' % (self.src_file, self.lineno, self.line)
+    
+        r = m.groupdict ()
+
+        if (r['ret'] != 'void' and r['ret'] != None) or r['star'] or r['qual']:
+            raise OilSyntaxError, '(%s:%d) "%s": Return type should be void' % (self.src_file, self.lineno, self.line)
+
+        params = []
+        for param in r['param_list'].split (','):
+            params.append (self.__parse_parameter (param))
+        
+        cls_name = r['func_name']
+        
+        return cls_name, params
+
+    def __parse_parameter (self, a_param):
+        type = '(?P<type>(%s%s)*%s)' % (self.word, self.sep, self.word)
+        starsep = '(?:%s(?P<star>\*+)%s|%s)' % (self.pad, self.pad, self.sep)
+        arg = '(?P<arg>%s)' % self.word
+        
+        pattern = '^' + self.pad + type + starsep + arg + self.pad + '$'
+        param = re.compile (pattern)
+        
+        m = param.match (a_param)
+        if not m:
+            raise OilSyntaxError, '(%s:%d)Bad parameter "%s" ==> %s <==' % (self.src_file, self.lineno, a_param, self.line)
+        
+        ret = ['param_type', 'arg']
+        r = m.groupdict ()
+        
+        t = r['type']
+        tlist = re.compile (self.sep).split (t);
+        if len (tlist) >2 or (len (tlist) == 2 and 'const' not in tlist):
+            raise OilSyntaxError, '(%s:%d)"%s": only support const qualified type ==> %s <==' % (self.src_file, self.lineno, a_param, self.line)
+        
+        #check whether the type is supported
+        idx = 0
+        if len (tlist) == 2:
+            idx = (tlist.index ('const') + 1) & 1
+        bt = tlist[idx]
+        if bt not in supported_types_base:
+            raise OilSyntaxError, '(%s:%d)"%s": not supported type "%s" ==> %s <==' % (self.src_file, self.lineno, a_param, bt, self.line)
+        
+        ret[0] = ' '.join (tlist)
+        if r['star']:
+            if len (r['star']) > 1:
+                raise OilSyntaxError, '(%s:%d)"%s": only 1 level pointer allowed ==> %s <==' % (self.src_file, self.lineno, a_param, self.line)
+            else:
+                ret[0] += ' *'
+            
+        ret[1] = r['arg']
+        
+        return ret
+    
+    @staticmethod
+    def gen_canonical_id (raw):
+        if not re.compile ('^\w+$').match (raw):
+            ret = b64encode (raw, '__')
+            ret = ret.replace ('=', '_')
+        else:
+            ret = raw
+        
+        return ret
+
+if __name__ == '__main__':
+    usage = """usage: %s <class_definition_file> [--force]
+output: <class_definition_file>.c & <class_definition_file>.h
+        <register_classes.c> & <attach_classes.c>
+        <class_definition_file>_marshal.h & <class_definition_file>_marshal.c"""
+
+    try:
+        opts, left = gnu_getopt (sys.argv[1:], 'fh', ['force', 'help'])
+    except GetoptError:
+        print usage % sys.argv[0]
+        sys.exit (-1)
+    
+    opts = [o[0] for o in opts]
+    if '-f' in opts or '--force' in opts:
+        overwrite = True
+    else:
+        overwrite = False
+    
+    if '-h' in opts or '--help' in opts or len (left) != 1:
+        print usage % sys.argv[0]
+        sys.exit (0)
+    
+    definition = left[0]
+    
+    #import pdb
+    #pdb.set_trace ()
+    try:
+        defs = parser (definition, overwrite)
+        defs.parse ()
+    except KeyboardInterrupt:
+        print 'Bye'
+        sys.exit (0)
+    except IOError:
+        sys.exit ('[IOError] %s' % sys.exc_info ()[1])
+    except OilSyntaxError:
+        sys.exit ('[SyntaxError] %s' % sys.exc_info ()[1])

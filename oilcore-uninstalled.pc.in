@@ -1,0 +1,6 @@
+Name: OilCore Uninstalled
+Description: Oil Core Library, Not Installed
+Version: @OIL_VERSION@
+Libs: ${pc_top_builddir}/${pcfiledir}/oilcore/liboilcore-@OIL_MAJOR_VERSION@.@OIL_MINOR_VERSION@.la
+Cflags: -I${pc_top_builddir}/${pcfiledir}/@srcdir@/oilcore
+

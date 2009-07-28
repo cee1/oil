@@ -1,0 +1,7 @@
+Name: OilTest Uninstalled
+Description: Oil Test Library, Not Installed
+Version: @OIL_VERSION@
+Requires: glib-2.0-uninstalled >= 2.14, oilcore-@OIL_MAJOR_VERSION@.@OIL_MINOR_VERSION@-uninstalled = @OIL_VERSION@
+Libs: ${pc_top_builddir}/${pcfiledir}/oiltest/liboiltest-@OIL_MAJOR_VERSION@.@OIL_MINOR_VERSION@.la
+Cflags: -I${pc_top_builddir}/${pcfiledir}/@srcdir@/oiltest
+
