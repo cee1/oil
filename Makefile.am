@@ -9,6 +9,10 @@ if HAVE_OILFUNCS
 SUBDIRS += oilfuncs
 endif
 
+if ENABLE_GTK_DOC
+SUBDIRS += docs
+endif
+
 EXTRA_DIST =                    \
     autogen.sh                  \
     COPYING README              \
@@ -47,4 +51,6 @@ CLEANFILES =                                                            \
     oiltest-@OIL_MAJOR_VERSION@.@OIL_MINOR_VERSION@-uninstalled.pc      \
     oilfuncs-@OIL_MAJOR_VERSION@.@OIL_MINOR_VERSION@.pc                 \
     oilfuncs-@OIL_MAJOR_VERSION@.@OIL_MINOR_VERSION@-uninstalled.pc
+
+DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc
 

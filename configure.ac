@@ -97,6 +97,7 @@ AC_MSG_RESULT([$result])
 
 AM_CONDITIONAL(HAVE_I386, test "x$HAVE_I386" = "xyes")
 AM_CONDITIONAL(HAVE_MIPS, test "x$HAVE_MIPS" = "xyes")
+GTK_DOC_CHECK([1.11])
 
 pkgconfigdir="\$(libdir)/pkgconfig"
 AC_SUBST(pkgconfigdir)
@@ -112,6 +113,10 @@ AC_CONFIG_FILES([oilcore.pc
                 oilcore/tests/Makefile
                 oiltest/Makefile
                 oiltest/tests/Makefile
+                docs/Makefile
+                docs/oilcore/Makefile
+                docs/oiltest/Makefile
+                docs/oilfuncs/Makefile
                 oilfuncs/Makefile
                 oilfuncs/ref/Makefile
                 oilfuncs/i386/Makefile

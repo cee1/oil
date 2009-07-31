@@ -1,1 +1,1 @@
-autoreconf -i -f && ./configure --enable-maintainer-mode
+gtkdocize --copy && autoreconf -i -f && ./configure --enable-maintainer-mode $@
