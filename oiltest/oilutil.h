@@ -12,11 +12,24 @@
 
 G_BEGIN_DECLS
 
+/**
+ * oil_act_if_fail:
+ * @expr: an expression
+ * @fail_stmts: the statements that will be executed, when @expr evaluates FALSE
+ * 
+ * This macro will execute @fail_stmts, when @expr evaluates FALSE.
+ */
 #define oil_act_if_fail(expr, fail_stmts)                               \
 G_STMT_START {                                                          \
     if (!(expr)) { fail_stmts; }                                        \
 } G_STMT_END
 
+/**
+ * oil_error_gerror:
+ * @gerror: a #GError
+ *
+ * Prints @gerror by g_error() and abort
+ */
 #define oil_error_gerror(gerror)                                        \
 G_STMT_START {                                                          \
     const gchar *domain = g_quark_to_string ((gerror)->domain);         \
@@ -27,6 +40,12 @@ G_STMT_START {                                                          \
     /* should abort */                                                  \
 } G_STMT_END
 
+/**
+ * oil_warning_gerror:
+ * @gerror: a #GError
+ *
+ * Prints @gerror by g_warning()
+ */
 #define oil_warning_gerror(gerror) G_STMT_START {                       \
     const gchar *domain = g_quark_to_string ((gerror)->domain);         \
     g_warning ("%s: Error code: %d, %s",                                \
@@ -35,6 +54,12 @@ G_STMT_START {                                                          \
                         (gerror)->message);                             \
 } G_STMT_END
 
+/**
+ * oil_timestamp:
+ * @timestamp: an output argument
+ * 
+ * Gets the time stamp, returned by @timestamp
+ */
 #define oil_timestamp(timestamp)                                        \
 G_STMT_START {                                                          \
         GTimeVal _tv;                                                   \
@@ -43,15 +68,29 @@ G_STMT_START {                                                          \
                       _tv.tv_usec) / G_USEC_PER_SEC;                    \
 } G_STMT_END
 
-#define oil_log_detail(g_logfunc, fmt, args...)                         \
+/**
+ * oil_log_detail:
+ * @g_logfunc: a logging function
+ * @format: the formating string
+ *
+ * Outputs time-stamped message by @g_logfunc. The message is formatted like printf.
+ * 
+ */
+#define oil_log_detail(g_logfunc, format, args...)                         \
 G_STMT_START {                                                          \
         gdouble _timestamp;                                             \
         oil_timestamp (&_timestamp);                                    \
-        g_logfunc ("[%f] %s(): " fmt "\n", _timestamp,                  \
+        g_logfunc ("[%f] %s(): " format "\n", _timestamp,                  \
                  G_STRFUNC, ##args);                                    \
 } G_STMT_END
 
-#define oil_oops(fmt, args...) oil_log_detail(g_error, fmt, ##args)
+/**
+ * oil_oops:
+ * @format: the formating string
+ *
+ * Outputs message and abort. The message is formatted like printf.
+ */
+#define oil_oops(format, args...) oil_log_detail(g_error, format, ##args)
 
 typedef gpointer (*OilTimerNew) ();
 typedef void (*OilTimerStamp) (gpointer timer);
@@ -96,7 +135,7 @@ void oil_randize_array_default (
         gint stride, 
         gint post_n);
 
-gchar *oil_flags_to_string (guint flag);
+gchar *oil_flags_to_string (guint flags);
 
 gpointer oil_timer_new_default ();
 void oil_timer_start_default (gpointer timer);

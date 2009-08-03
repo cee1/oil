@@ -98,70 +98,23 @@ static gboolean _check_violation (
         OilGenericType *data);
 static gboolean _check_guard (guint8 *p, gint size, gint8 guard);
 
-void oil_test_attach_class_full (
-        gchar *cls_name, 
-        gchar *prototype,
-        OilProfCall call,
-        OilChecker *checker,
-        OilProfiler *profiler)
-{
-    OilClass *cls;
-    OilClassData *data = NULL;
-    OilParameter *params = NULL;
-    guint n_params;
-    
-    g_return_if_fail (cls_name && *cls_name);
-    g_return_if_fail (prototype && *prototype);
-    g_return_if_fail (call);
-    g_return_if_fail (checker && 
-            checker->init && checker->uninit &&
-            checker->generate_sample && checker->check_result);
-    g_return_if_fail (profiler && 
-            profiler->begin && profiler->end &&
-            profiler->start && profiler->stop);
-    
-    cls = oil_class_get (cls_name);
-    oil_act_if_fail (cls, g_warning ("Fail to attach test context to class \"%s\": no such class", cls_name); return);
+/**
+ * SECTION:test_log
+ * @short_description: logging function that used in the test
+ * 
+ * These logging functions output log in "header:body\n" text formation.
+ * To enable logging, you need set silent_mode FALSE and indicate a logfd by oil_test_config_set()
+ */
 
-    data = oil_class_get_data (cls);
-    oil_act_if_fail (!data, g_warning ("Fail to attach test context to class \"%s\": already attached", cls_name); return);
-    
-    if (oil_prototype_parse (prototype, &n_params, &params)) {
-        data = g_slice_new (OilClassData);
-        oil_act_if_fail (data, oil_oops ("memory alloc failed"));
-        
-        /* chain to cls & free check checker & profiler */
-        data->prototype = g_strdup (prototype);
-        data->n_params = n_params;
-        data->parameters = params;
-        data->call = call;
-        data->checker = checker;
-        data->profiler = profiler;
-        
-        oil_class_add_data (cls, data);
-    }
-}
-
-void oil_test_destroy_class_data (void *data)
-{
-    if (data) {
-        gint i;
-        
-        OilClassData *cls_data = (OilClassData *) data;
-        
-        g_free (cls_data->prototype);
-        
-        for (i = 0; i < cls_data->n_params; i++)
-            g_free ((cls_data->parameters + i)->parameter);
-        
-        g_free (cls_data->parameters);
-        g_slice_free (OilClassData, data);
-    }
-}
-
+/**
+ * oil_test_log:
+ * @msg: the log message
+ *
+ * Appends a "\n" to @msg, and outputs it.
+ */
 void oil_test_log (gchar *msg)
 {
-    if (!oil_test_config_slient ()) {
+    if (!oil_test_config_silent ()) {
     
         gint log_fd = oil_test_config_logfd ();
         
@@ -181,9 +134,15 @@ void oil_test_log (gchar *msg)
     }
 }
 
+/**
+ * oil_test_log_printf:
+ * @format: the format just like that used in printf
+ * 
+ * A printf-like logging function.
+ */
 void oil_test_log_printf (gchar *format, ...)
 {
-    if (!oil_test_config_slient ()) {
+    if (!oil_test_config_silent ()) {
         gchar *msg;
         va_list args;
         
@@ -197,12 +156,19 @@ void oil_test_log_printf (gchar *format, ...)
     }
 }
 
+/**
+ * oil_test_log_binary:
+ * @ptr: point the binary data
+ * @n: length of the binary data
+ * 
+ * Outputs the binary data in hex.
+ */
 void oil_test_log_binary (guint8 *ptr, guint n)
 {
     guint i;
     GString *gstr;
     
-    if (oil_test_config_slient ()) return;
+    if (oil_test_config_silent ()) return;
     g_return_if_fail (ptr && n > 0);
     
     gstr = g_string_new (NULL);
@@ -215,30 +181,17 @@ void oil_test_log_binary (guint8 *ptr, guint n)
     g_string_free (gstr, TRUE);
 }
 
-void oil_test_log_seed (guint32 *seed, guint seed_len)
-{
-    guint i;
-    GString *gstr;
-    
-    if (oil_test_config_slient ()) return;
-    g_return_if_fail (seed && seed_len > 0);
-    
-    gstr = g_string_new ("Seed Array: ");
-    g_string_append_printf (gstr, "%d", seed[0]);
-    
-    for (i = 1; i < seed_len; i++) {
-        guint32 e = seed[i];
-        g_string_append_printf (gstr, ", %d", seed[i]);
-    }
-    oil_test_log (gstr->str);
-    g_string_free (gstr, TRUE);
-}
-
+/**
+ * oil_test_log_parameter:
+ * @param: an #OilParameter
+ * 
+ * Outputs an #OilParameter.
+ */
 void oil_test_log_parameter (OilParameter *param)
 {
     GString *gstr;
     
-    if (oil_test_config_slient ()) return;
+    if (oil_test_config_silent ()) return;
     g_return_if_fail (param);
     
     gstr = g_string_new (NULL);
@@ -320,6 +273,119 @@ void oil_test_log_parameter (OilParameter *param)
     g_string_free (gstr, TRUE);
 }
 
+/**
+ * SECTION:tester
+ * @short_description: functions that perform the actual test.
+ * 
+ * First you need attach some testing information to function class, then run
+ * oil_test_optimize_class_all() or oil_test_optimize_class(), e.g.
+ * |[
+ * /&ast; initialize the oilcore environment &ast;/
+ * oil_class_init (oil_test_destroy_class_data);
+ * 
+ * /&ast; register some function classes & add some implements to each class &ast;/
+ * ...
+ * 
+ * /&ast; attach testing context to each class &ast;/
+ * oil_test_attach_class_full (
+ *     "oil_copy8x8_u8", /&ast; name of the function class &ast;/
+ *     "uint8_t * d_8x8, int ds, uint8_t * s_8x8, int ss", /&ast; prototype string &ast;/
+ *     OIL_MARSHAL__UINT8_Tp_INT_UINT8_Tp_INT, /&ast; the marshal function &ast;/
+ *     &oil_checker_default, /&ast; the default checker &ast;/
+ *     &oil_profiler_default); /&ast; the default profiler &ast;/
+ *
+ * /&ast; perform the test, optimizing all classes &ast;/
+ * oil_test_optimize_class_all ();
+ *
+ * /&ast; un-initialize the oilcore environment, if not need it anymore &ast;/
+ * oil_class_uninit (oil_test_destroy_class_data);
+ * ]|
+ */
+/**
+ * oil_test_attach_class_full:
+ * @cls_name: the name of the function class
+ * @prototype: the prototype string
+ * @call: the marshal function
+ * @checker: the checker, whether you provide one or oil_checker_default
+ * @profiler: the profiler, whether you provide one or oil_profiler_default
+ *
+ * Attach testing context to @cls_name, see the description for detail.
+ * This function is typically not directly used by user, 
+ * the script #oil-regimpls will generate code of attaching.
+ */
+void oil_test_attach_class_full (
+        gchar *cls_name, 
+        gchar *prototype,
+        OilProfCall call,
+        OilChecker *checker,
+        OilProfiler *profiler)
+{
+    OilClass *cls;
+    OilClassData *data = NULL;
+    OilParameter *params = NULL;
+    guint n_params;
+    
+    g_return_if_fail (cls_name && *cls_name);
+    g_return_if_fail (prototype && *prototype);
+    g_return_if_fail (call);
+    g_return_if_fail (checker && 
+            checker->init && checker->uninit &&
+            checker->generate_sample && checker->check_result);
+    g_return_if_fail (profiler && 
+            profiler->begin && profiler->end &&
+            profiler->start && profiler->stop);
+    
+    cls = oil_class_get (cls_name);
+    oil_act_if_fail (cls, g_warning ("Fail to attach test context to class \"%s\": no such class", cls_name); return);
+
+    data = oil_class_get_data (cls);
+    oil_act_if_fail (!data, g_warning ("Fail to attach test context to class \"%s\": already attached", cls_name); return);
+    
+    if (oil_prototype_parse (prototype, &n_params, &params)) {
+        data = g_slice_new (OilClassData);
+        oil_act_if_fail (data, oil_oops ("memory alloc failed"));
+        
+        /* chain to cls & free check checker & profiler */
+        data->prototype = g_strdup (prototype);
+        data->n_params = n_params;
+        data->parameters = params;
+        data->call = call;
+        data->checker = checker;
+        data->profiler = profiler;
+        
+        oil_class_add_data (cls, data);
+    }
+}
+
+/**
+ * oil_test_destroy_class_data:
+ * 
+ * The only usage of this function is passed itself to oil_class_init.
+ * Then it will release the testing context when un-initialize the oilcore environment.
+ */
+void oil_test_destroy_class_data (void *data)
+{
+    if (data) {
+        gint i;
+        
+        OilClassData *cls_data = (OilClassData *) data;
+        
+        g_free (cls_data->prototype);
+        
+        for (i = 0; i < cls_data->n_params; i++)
+            g_free ((cls_data->parameters + i)->parameter);
+        
+        g_free (cls_data->parameters);
+        g_slice_free (OilClassData, data);
+    }
+}
+
+/**
+ * oil_test_optimize_class:
+ * @cls_name: the name of the function class
+ * 
+ * Performs the test on @cls_name, select & activate the best implement for @cls_name.
+ */
 void oil_test_optimize_class (char *cls_name)
 {
     OilClass *cls = NULL;
@@ -338,6 +404,11 @@ void oil_test_optimize_class (char *cls_name)
     _optimize_class (cls, cls_data, ref);
 }
 
+/**
+ * oil_test_optimize_class_all:
+ *
+ * Like oil_test_optimize_class(), but performs test on all classs.
+ */
 void oil_test_optimize_class_all ()
 {
     oil_class_foreach (_optimize_class_visitor_wrap, NULL);

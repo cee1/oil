@@ -1,0 +1,83 @@
+<refentry id="prototype-syntax" revision="5 Aug 2009">
+<refmeta>
+<refentrytitle>The syntax of prototype string</refentrytitle>
+<manvolnum>3</manvolnum>
+<refmiscinfo>OILTEST Library</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname>The syntax of prototype string</refname>
+  </refnamediv>
+
+    <refsect1 id="prototype_string_syntax">
+      <para>
+        The prototype string is used to describe the each parameter of the functions in function classes. These functions manipulate data streams. oiltest describes a data stream like  this:</para>
+      <figure id="data_stream">
+      <title>The data stream oiltest sees</title>
+      <graphic fileref="array.png" format="PNG"></graphic>
+      </figure>
+    <refsect2 id="detailed_syntax">
+      <para>
+      Here, we use a regular express like syntax to describe the syntax of prototype string
+      </para>
+      <programlisting>
+white_pad       =       " (\s)*                                                   "
+white           =       " (\s)+                                                   "
+word            =       " (\w)+                                                   "
+star_or_white   =       " (white_pad \* white_pad) | (white)                      "
+Parameter       =       " white_pad word1 white_pad star_or_white word2 white_pad "
+Prototype       =       " (Parameter) (, Parameter)*                              "
+
+c_type = word1
+Argument = word2
+    
+    # parse  Argument
+    lenSpec     =       " ( \d+ | ( [ n m ] ( p\d+)? ) )                          "
+    switch (Argument):
+        match " (n|m)                                     ":
+                      # scale argument
+                      arg_class = OIL_ARG_T_SCALE
+                      is_stride = FALSE
+                      is_pointer = FALSE
+                      arg_type = OIL_ARG_N || OIL_ARG_M
+                      
+        match " [ i s d ]s \d?                            ":
+                      # stride argument
+                       
+                      # i stand for inplace:       OIL_ARG_T_INPLACE
+                      # s stand for source:        OIL_ARG_T_SRC
+                      # d stand for destination:   OIL_ARG_T_DEST
+                      arg_class   =  OIL_ARG_T_INPLACE || OIL_ARG_T_SRC || OIL_ARG_T_DEST
+                      is_stride   =  TRUE
+                      is_pointer  =  FALSE
+                      index       =  \d || 1
+                      
+        match " [ i s d ]\d? ( _lenSpec1 (x lenSpec2)? )? ":
+                      # array argument
+                       
+                      # i stand for inplace:       OIL_ARG_T_INPLACE
+                      # s stand for source:        OIL_ARG_T_SRC
+                      # d stand for destination:   OIL_ARG_T_DEST
+                      arg_class   =  OIL_ARG_T_INPLACE || OIL_ARG_T_SRC || OIL_ARG_T_DEST
+                      is_stride   =  FALSE
+                      is_pointer  =  TRUE
+                      index       =  \d || 1
+                      
+                      if Have lenSpec2:
+                            prestride_length   =  len1 || 0
+                            prestride_var      =  0 || 1 || 2 # [^n1m1] || n1 || m1
+                            poststride_length  =  len2 || 0
+                            poststride_var     =  0 || 1 || 2 # [^n2m2] || n2 || m2
+                      elif Have lenSpec1:
+                            prestride_length   =  1
+                            prestride_var      =  0
+                            poststride_length  =  len1 || 0
+                            poststride_var     =  0 || 1 || 2 # [^n1m1] || n1 || m1
+                      else:
+                            prestride_length   =  1
+                            prestride_var      =  0
+                            poststride_length  =  0
+                            poststride_var     =  1</programlisting>
+   </refsect2>
+   </refsect1>
+</refentry>

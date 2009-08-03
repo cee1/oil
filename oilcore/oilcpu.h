@@ -12,6 +12,7 @@ extern "C" {
 
 /**
  * OilCPUFlagBits:
+ * 
  * FlagBit tells nth bit of the flags, it should be used with OIL_FLAG(), to generate the flag
  * Note flagBit is pre-architecture sense: the same flagBit has different meaning in different arch
  */

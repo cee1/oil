@@ -34,7 +34,6 @@ void oil_test_destroy_class_data (void *data);
 void oil_test_log (gchar *msg);
 void oil_test_log_printf (gchar *format, ...);
 void oil_test_log_binary (guint8 *ptr, guint n);
-void oil_test_log_seed (guint32 *seed, guint seed_len);
 void oil_test_log_parameter (OilParameter *param);
 
 void oil_test_optimize_class (char *cls_name);

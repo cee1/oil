@@ -17,7 +17,7 @@ void test_testconfig ()
     gint iterations, iterations2;
     gdouble tl, th, tl2, th2;
     gchar *seed, *seed2;
-    gboolean slient, slient2;
+    gboolean silent, silent2;
     
     print_config ();
     
@@ -29,14 +29,14 @@ void test_testconfig ()
             OIL_CONF_OPT_FOOTER_LEN, &footer_len,
             OIL_CONF_OPT_TEST_M, &test_m,
             OIL_CONF_OPT_TEST_N, &test_n,
-            OIL_CONF_OPT_SLIENT, &slient,
+            OIL_CONF_OPT_SILENT, &silent,
             OIL_CONF_OPT_ITERATIONS, &iterations,
             OIL_CONF_OPT_TOLERANCE_HIGH, &th,
             OIL_CONF_OPT_TOLERANCE_LOW, &tl,
             NULL
     );
     g_assert (oil_test_config_height () == 1);
-    g_assert (slient == oil_test_config_slient ());
+    g_assert (silent == oil_test_config_silent ());
     g_assert_cmpint (fd, ==, oil_test_config_logfd ());
     g_assert_cmpfloat (th, ==, oil_test_config_tolerance_high ());
     g_assert_cmpfloat (tl, ==, oil_test_config_tolerance_low ());
@@ -51,7 +51,7 @@ void test_testconfig ()
         gint iterations = 10000;
         gdouble tl = 0.01, th = 0.5;
         gchar *seed =SEED_STR;
-        gboolean slient = TRUE;
+        gboolean silent = TRUE;
         
         oil_test_config_push (0);
         oil_test_config_set (
@@ -62,7 +62,7 @@ void test_testconfig ()
                 OIL_CONF_OPT_FOOTER_LEN, footer_len,
                 OIL_CONF_OPT_TEST_M, test_m,
                 OIL_CONF_OPT_TEST_N, test_n,
-                OIL_CONF_OPT_SLIENT, slient,
+                OIL_CONF_OPT_SILENT, silent,
                 OIL_CONF_OPT_ITERATIONS, iterations,
                 OIL_CONF_OPT_TOLERANCE_HIGH, th,
                 OIL_CONF_OPT_TOLERANCE_LOW, tl,
@@ -80,13 +80,13 @@ void test_testconfig ()
                 OIL_CONF_OPT_FOOTER_LEN, &footer_len2,
                 OIL_CONF_OPT_TEST_M, &test_m2,
                 OIL_CONF_OPT_TEST_N, &test_n2,
-                OIL_CONF_OPT_SLIENT, &slient2,
+                OIL_CONF_OPT_SILENT, &silent2,
                 OIL_CONF_OPT_ITERATIONS, &iterations2,
                 OIL_CONF_OPT_TOLERANCE_HIGH, &th2,
                 OIL_CONF_OPT_TOLERANCE_LOW, &tl2,
                 NULL
         );
-        g_assert (slient == slient2);
+        g_assert (silent == silent2);
         g_assert_cmpint (test_m, ==, test_m2);
         g_assert_cmpint (test_n, ==, test_n2);
         g_assert_cmpint (header_len, ==, header_len2);
@@ -112,13 +112,13 @@ void test_testconfig ()
             OIL_CONF_OPT_FOOTER_LEN, &footer_len2,
             OIL_CONF_OPT_TEST_M, &test_m2,
             OIL_CONF_OPT_TEST_N, &test_n2,
-            OIL_CONF_OPT_SLIENT, &slient2,
+            OIL_CONF_OPT_SILENT, &silent2,
             OIL_CONF_OPT_ITERATIONS, &iterations2,
             OIL_CONF_OPT_TOLERANCE_HIGH, &th2,
             OIL_CONF_OPT_TOLERANCE_LOW, &tl2,
             NULL
         );
-    g_assert (slient == slient2);
+    g_assert (silent == silent2);
     g_assert_cmpint (test_m, ==, test_m2);
     g_assert_cmpint (test_n, ==, test_n2);
     g_assert_cmpint (header_len, ==, header_len2);
@@ -142,7 +142,7 @@ static void print_config ()
     gint iterations;
     gdouble tl, th;
     gchar *seed;
-    gboolean slient;
+    gboolean silent;
     
     oil_test_config_get (
             -1,
@@ -152,7 +152,7 @@ static void print_config ()
             OIL_CONF_OPT_FOOTER_LEN, &footer_len,
             OIL_CONF_OPT_TEST_M, &test_m,
             OIL_CONF_OPT_TEST_N, &test_n,
-            OIL_CONF_OPT_SLIENT, &slient,
+            OIL_CONF_OPT_SILENT, &silent,
             OIL_CONF_OPT_ITERATIONS, &iterations,
             OIL_CONF_OPT_TOLERANCE_HIGH, &th,
             OIL_CONF_OPT_TOLERANCE_LOW, &tl,
@@ -162,6 +162,6 @@ static void print_config ()
     g_print ("log_fd: %d, seed: \"%s\"\n", fd, seed);
     g_print ("header_len: %d, footer_len: %d\n", header_len, footer_len);
     g_print ("test_m: %d, test_n: %d\n", test_m, test_n);
-    g_print ("slient: %s, iterations: %d\n", slient ? "True": " False", iterations);
+    g_print ("silent: %s, iterations: %d\n", silent ? "True": " False", iterations);
     g_print ("Tolerance: High %f, Low %f\n", th, tl);
 }

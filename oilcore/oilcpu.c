@@ -5,6 +5,13 @@
  */
 #include "oilcpu.h"
 
+/** 
+ * SECTION:cpu_detection
+ * @short_description: provide CPU info to oiltest
+ * 
+ * Provide the information about what features the current CPU has?
+ */
+
 char *oil_flags_descriptions[OIL_FLAGBIT_NR] = {
 #ifdef HAVE_MIPS
     "godson_2f",
@@ -15,6 +22,8 @@ char *oil_flags_descriptions[OIL_FLAGBIT_NR] = {
 
 /**
  * oil_cpu_get_flags:
+ *
+ * query features of the current CPU
  *
  * Returns: the flags corresponding the current CPU
  */

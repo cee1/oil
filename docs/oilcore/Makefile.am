@@ -12,7 +12,7 @@ SCANGOBJ_OPTIONS =
 # SCAN_OPTIONS = --deprecated-guards="OIL_DISABLE_DEPRECATED" --ignore-decorators="_"
 SCAN_OPTIONS =
 
-MKDB_OPTIONS = --sgml-mode --output-format=xml --name-space=oil --ignore-files="../../oilcore/hashtable.c hastable.h"
+MKDB_OPTIONS = --sgml-mode --output-format=xml --name-space=oil --ignore-files="hashtable.c hastable.h"
 
 # Extra options to supply to gtkdoc-mktmpl
 # e.g. MKTMPL_OPTIONS=--only-section-tmpl

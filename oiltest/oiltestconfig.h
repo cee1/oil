@@ -18,7 +18,7 @@ enum {
     OIL_CONF_OPT_FOOTER_LEN,
     OIL_CONF_OPT_TEST_M,
     OIL_CONF_OPT_TEST_N,
-    OIL_CONF_OPT_SLIENT,
+    OIL_CONF_OPT_SILENT,
     OIL_CONF_OPT_ITERATIONS,
     OIL_CONF_OPT_TOLERANCE_HIGH,
     OIL_CONF_OPT_TOLERANCE_LOW,
@@ -28,7 +28,7 @@ guint oil_test_config_height ();
 void oil_test_config_get (gint n_params, ...);
 gint oil_test_config_iterations ();
 gint oil_test_config_logfd ();
-gboolean oil_test_config_slient ();
+gboolean oil_test_config_silent ();
 GRand *oil_test_config_rand ();
 gdouble oil_test_config_tolerance_high ();
 gdouble oil_test_config_tolerance_low ();

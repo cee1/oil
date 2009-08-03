@@ -24,7 +24,7 @@ struct _OilTestConfig {
     gint test_m;
     gint test_n;
     gint iterations;
-    gboolean slient;
+    gboolean silent;
     gdouble tolerance_high;
     gdouble tolerance_low;
 
@@ -41,12 +41,51 @@ static gchar *_gen_seed_from_string (
         GRand **rand_);
 static gboolean _may_init ();
 
-/* only for debug */
+/**
+ * SECTION:test_config
+ * @short_description: stack-based test context configurator
+ *
+ * oil_test_config is a stack-based configurator to control how the testing is performed.
+ * <note>
+ * <para>
+ * oiltest only read the configuration variables before performing the actually testing,
+ * so you should call these functions before calling oil_test_optimize_class*
+ * </para>
+ * </note>
+ */
+
+/**
+ * oil_test_config_height:
+ *
+ * The height of the stack, only for debugging.
+ *
+ * Returns: the height of the stack.
+ */
 guint oil_test_config_height ()
 {
     return g_trash_stack_height (&oil_test_config);
 }
 
+/**
+ * oil_test_config_push:
+ * @n_params: the number of remaining arguments or -1, 
+ * which means the variable-length argument list end with NULL
+ *
+ * Pushes a frame, and modifies some variables, e.g.
+ * |[
+ * oil_test_config_push (3, 
+ *                       OIL_CONF_OPT_LOG_FD, 0,
+ *                       OIL_CONF_OPT_SEED, "R02S939fc71d669f7c0c88a7eb85b190df83",
+ *                       OIL_CONF_OPT_SILENT, FALSE);
+ *
+ *
+ * oil_test_config_push (-1,
+ *                       OIL_CONF_OPT_HEADER_LEN, 128,
+ *                       OIL_CONF_OPT_TOLERANCE_HIGH, 0.001,
+ *                       OIL_CONF_OPT_TOLERANCE_LOW, 0,
+ *                       NULL);
+ * ]|
+ */
 void oil_test_config_push (gint n_params, ...)
 {
     va_list args;
@@ -61,6 +100,13 @@ void oil_test_config_push (gint n_params, ...)
     va_end (args);
 }
 
+/**
+ * oil_test_config_set:
+ * @n_params: the number of remaining arguments or -1, 
+ * which means the variable-length argument list end with NULL
+ *
+ * Like oil_test_config_push(), but not push any frame.
+ */
 void oil_test_config_set (gint n_params, ...)
 {
     va_list args;
@@ -70,6 +116,23 @@ void oil_test_config_set (gint n_params, ...)
     va_end (args);
 }
 
+/**
+ * oil_test_config_get:
+ * @n_params: the number of remaining arguments or -1, 
+ * which means the variable-length argument list end with NULL
+ *
+ * Get the values of the variables of the top frame, e. g.
+ * |[
+ * gchar *seed;
+ * gint header_len;
+ * 
+ * oil_test_config_get (-1,
+ *                      /&ast; returns internal string, don't free &ast;/
+ *                      OIL_CONF_OPT_SEED, &seed, 
+ *                      OIL_CONF_OPT_HEADER_LEN, &header_len,
+ *                      NULL);
+ * ]|
+ */
 void oil_test_config_get (gint n_params, ...)
 {
     va_list args;
@@ -79,6 +142,14 @@ void oil_test_config_get (gint n_params, ...)
     va_end (args);
 }
 
+/**
+ * oil_test_config_vset:
+ * @n_params: the number of arguments in @va_args or -1, 
+ * which means the @va_args is NULL-terminated
+ * @va_args: variable-length argument list
+ *
+ * va_list version of oil_test_config_set().
+ */
 void oil_test_config_vset (gint n_params, va_list va_args)
 {
     OilTestConfig *_f;
@@ -165,8 +236,8 @@ void oil_test_config_vset (gint n_params, va_list va_args)
                         _f->test_n = n;
                     }
                     break;
-                case OIL_CONF_OPT_SLIENT:
-                    _f->slient = va_arg (va_args, gboolean);
+                case OIL_CONF_OPT_SILENT:
+                    _f->silent = va_arg (va_args, gboolean);
                     break;
                 case OIL_CONF_OPT_ITERATIONS:
                     {
@@ -206,6 +277,14 @@ void oil_test_config_vset (gint n_params, va_list va_args)
     }
 }
 
+/**
+ * oil_test_config_vget:
+ * @n_params: the number of arguments in @va_args or -1, 
+ * which means the @va_args is NULL-terminated
+ * @va_args: variable-length argument list
+ * 
+ * va_list version of oil_test_config_get().
+ */
 void oil_test_config_vget (gint n_params, va_list va_args)
 {
     OilTestConfig *_f;
@@ -254,9 +333,9 @@ void oil_test_config_vget (gint n_params, va_list va_args)
                     i_ptr = va_arg (va_args, gint *);
                     *i_ptr = _f->test_n;
                     break;
-                case OIL_CONF_OPT_SLIENT:
+                case OIL_CONF_OPT_SILENT:
                     b_ptr = va_arg (va_args, gint *);
-                    *b_ptr = _f->slient;
+                    *b_ptr = _f->silent;
                     break;
                 case OIL_CONF_OPT_ITERATIONS:
                     i_ptr = va_arg (va_args, gint *);
@@ -278,6 +357,11 @@ void oil_test_config_vget (gint n_params, va_list va_args)
     }
 }
 
+/**
+ * oil_test_config_pop:
+ * 
+ * Pops up the top frame.
+ */
 void oil_test_config_pop ()
 {
     OilTestConfig *_f = g_trash_stack_pop (&oil_test_config);
@@ -286,6 +370,11 @@ void oil_test_config_pop ()
         _free_frame (_f);
 }
 
+/**
+ * oil_test_config_pop_all:
+ *
+ * Empty the stack.
+ */
 void oil_test_config_pop_all ()
 {
     OilTestConfig *_f = g_trash_stack_pop (&oil_test_config);
@@ -296,16 +385,28 @@ void oil_test_config_pop_all ()
     }
 }
 
-gboolean oil_test_config_slient ()
+/**
+ * oil_test_config_silent:
+ * 
+ * A shortcut of getting whether the silent mode is enabled
+ * 
+ * Returns: a #gboolean
+ */
+gboolean oil_test_config_silent ()
 {
     OilTestConfig *_f;
     _may_init ();
     
     _f = (OilTestConfig *) g_trash_stack_peek (&oil_test_config);
     
-    return _f->slient;
+    return _f->silent;
 }
 
+/**
+ * oil_test_config_iterations:
+ * 
+ * A shortcut of getting the times of the iteration.
+ */
 gint oil_test_config_iterations ()
 {
     OilTestConfig *_f;
@@ -316,6 +417,11 @@ gint oil_test_config_iterations ()
     return _f->iterations;
 }
 
+/**
+ * oil_test_config_tolerance_high:
+ *
+ * A shortcut of getting the extreme deviation from the reference could be accepted.
+ */
 gdouble oil_test_config_tolerance_high ()
 {
     OilTestConfig *_f;
@@ -325,6 +431,11 @@ gdouble oil_test_config_tolerance_high ()
     return _f->tolerance_high;
 }
 
+/**
+ * oil_test_config_tolerance_low:
+ *
+ * A shortcut of getting the minimal deviation from the reference could be accepted.
+ */
 gdouble oil_test_config_tolerance_low ()
 {
     OilTestConfig *_f;
@@ -334,6 +445,12 @@ gdouble oil_test_config_tolerance_low ()
     return _f->tolerance_low;
 }
 
+/**
+ * oil_test_config_rand:
+ * A shortcut of getting the random seed.
+ * 
+ * Returns: a #GRand
+ */
 GRand *oil_test_config_rand ()
 {
     OilTestConfig *_f;
@@ -344,6 +461,12 @@ GRand *oil_test_config_rand ()
     return _f->rand;
 }
 
+/**
+ * oil_test_config_logfd:
+ * A shortcut of getting the log file descriptor.
+ * 
+ * Returns: the fd of the log file
+ */
 gint oil_test_config_logfd ()
 {
     OilTestConfig *_f;
@@ -371,7 +494,7 @@ static gboolean _may_init ()
     _f->test_n = 100;
     _f->iterations = 10;
     _f->seed_str = _gen_seed_auto (&_f->rand);
-    _f->slient = TRUE;
+    _f->silent = TRUE;
     _f->tolerance_high = 0.001;
     _f->tolerance_low = 0.0;
     

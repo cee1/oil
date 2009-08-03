@@ -1,0 +1,30 @@
+<refentry id="oiltest-compiling" revision="5 Aug 2009">
+<refmeta>
+<refentrytitle>Compiling oiltest Application</refentrytitle>
+<manvolnum>3</manvolnum>
+<refmiscinfo>OILTEST Library</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname>Compiling oiltest Applications</refname>
+<refpurpose>
+How to compile your oiltest application
+</refpurpose>
+</refnamediv>
+
+<refsect1>
+<title>Compiling oiltest Applications on UNIX</title>
+<para>
+To compile a oiltest application, you need to tell the compiler where to 
+find the oiltest header files and libraries. This is done with the
+<application>pkg-config</application> utility:
+</para>
+<example>
+<title>Compiles an oiltest "Hello, world"</title>
+<programlisting>
+$ cc `pkg-config --cflags --libs oiltest-0.1` hello.c -o hello
+</programlisting>
+</example>
+</refsect1>
+
+</refentry>

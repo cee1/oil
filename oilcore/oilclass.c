@@ -7,16 +7,27 @@
  */
 
 /**
- * SECTION:oilclass
+ * SECTION:function_class
  * @short_description: manipulates function classes of their implements
- * @include: oil/oilclass.h
  *
- * function class: 
- *   * a prototype of a function
- *   * must have a reference implement
- *   * has only one active implement, which can be used by the exported function pointer
- *   * can add zero or more implement
- *   * can have some attachment, which will be used by oiltest 
+ * Function Class:
+ * <itemizedlist>
+ *   <listitem>
+ *     <para>Represents functions that have the same prototype & function</para>
+ *   </listitem>
+ *   <listitem>
+ *     <para>Must have a reference implement</para>
+ *   </listitem>
+ *   <listitem>
+ *     <para>Can add zero or more implement</para>
+ *   </listitem>
+ *   <listitem>
+ *     <para>Has only one active implement, which can be used by the exported function pointer</para>
+ *   </listitem>
+ *   <listitem>
+ *     <para>Can have an attachment, which will be used by oiltest</para>
+ *   </listitem>
+ * </itemizedlist>
  */
 #include "hashtable.h"
 #include "oilclass.h"
@@ -160,7 +171,7 @@ OilClass *oil_class_register (
 
 /**
  * oil_class_get:
- * @cls_name: 
+ * @cls_name: an #OilClass
  *
  * Get C structure representation of a function class from its name
  *
@@ -178,7 +189,7 @@ OilClass *oil_class_get (char *cls_name)
 
 /**
  * oil_class_get_name:
- * @cls: a #OilClass
+ * @cls: an #OilClass
  *
  * Get the name of a function class
  *
@@ -195,8 +206,8 @@ char *oil_class_get_name (OilClass *cls)
 
 /**
  * oil_class_add_data:
- * @cls: a #OilClass
- * @cls_data:
+ * @cls: an #OilClass
+ * @cls_data: the data attached to @cls
  *
  * Attach data @cls_data to a function class @cls. If the @cls already has attachment,
  * the attachment will be freed by class_data_destructor (registered in oil_class_init())
@@ -216,7 +227,7 @@ void oil_class_add_data (OilClass *cls, void *cls_data)
 
 /**
  * oil_class_get_data:
- * @cls: a #OilClass
+ * @cls: an #OilClass
  * 
  * Get the attachment of the @cls.
  *
@@ -233,7 +244,7 @@ void *oil_class_get_data (OilClass *cls)
 
 /**
  * oil_class_get_reference:
- * @cls: a #OilClass
+ * @cls: an #OilClass
  *
  * Get the reference implement of function class @cls
  *
@@ -249,7 +260,7 @@ void *oil_class_get_reference (OilClass *cls)
 
 /**
  * oil_class_add_implement:
- * @cls:
+ * @cls: an #OilClass
  * @impl_name: name of the implement, should not be NULL
  * @func: the actual function of implement, should not be NULL
  * @flags: flags tells what features CPU must have to run the implement, see #OilCPUFlagBits
@@ -305,7 +316,7 @@ void oil_class_add_implement (
 
 /**
  * oil_class_remove_implement:
- * @cls:
+ * @cls: #OilClass
  * @impl_name: name of the implement, should not be NULL
  *
  * remove implement @impl_name from function class @cls, rarely use
@@ -355,7 +366,7 @@ void oil_class_foreach (OilClassVisitor visitor, void *user_data)
 
 /**
  * oil_class_implements_foreach:
- * @cls:
+ * @cls: #OilClass
  * @visitor: the function to be called with each implement of @cls
  * @user_data: data for @visitor
  *
@@ -380,7 +391,7 @@ char *oil_class_implements_foreach (
 
 /**
  * oil_class_clear_implements:
- * @cls:
+ * @cls: #OilClass
  *
  * remove all implements of function class @cls
  *
@@ -398,7 +409,7 @@ int oil_class_clear_implements (OilClass *cls)
 
 /**
  * oil_class_active_implement:
- * @cls:
+ * @cls: #OilClass
  * @impl_name: the name of the implement, NULL means active the reference implement
  *
  * Make @impl_name as the active implement of function class @cls.
@@ -427,7 +438,7 @@ void oil_class_active_implement (OilClass *cls, char *impl_name)
 
 /**
  * oil_class_get_active_implement:
- * @cls:
+ * @cls: #OilClass
  *
  * Retrieve the active implement of function class @cls
  *

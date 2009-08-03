@@ -8,10 +8,10 @@
  */
 
 /**
- * SECTION:oilparameter
- * @short_description: parses parameter specification string, generates #OilParameter
- * @include: oil/oilparameter.h
- * @stability: Internal
+ * SECTION:parse_prototype_string
+ * @short_description: parses prototype specification string, 
+ * generates an array of #OilParameter 
+ * @stability: Private
  */
 #include "oilparameter.h"
 #include "oilutil.h"
@@ -29,7 +29,6 @@ static gboolean _prototype_check_sanity (
 
 /**
  * oil_type_sizeof:
- * @stability: Internal
  * @type: a #OilType
  *
  * Returns: size of @type, in bytes

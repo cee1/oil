@@ -13,7 +13,7 @@ int main ()
     
     oil_test_config_set (
             -1,
-            OIL_CONF_OPT_SLIENT, FALSE,
+            OIL_CONF_OPT_SILENT, FALSE,
             OIL_CONF_OPT_LOG_FD, 0,
             NULL);
     oil_test_optimize_class_all ();

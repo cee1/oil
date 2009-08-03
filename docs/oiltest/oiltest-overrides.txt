@@ -1,0 +1,96 @@
+<UNION>
+<NAME>OilGenericType</NAME>
+typedef struct {
+    gpointer p;
+    guint64 i64;
+    gdouble f64;
+} OilGenericType;
+</UNION>
+
+<VARIABLE>
+<NAME>oil_randize_array</NAME>
+OilRandizeArray oil_randize_array = oil_randize_array_default;
+</VARIABLE>
+
+<VARIABLE>
+<NAME>oil_timer_class</NAME>
+OilTimerClass oil_randize_array = {
+    .new = oil_timer_new_default,
+    .start = oil_timer_start_default,
+    .stop = oil_timer_stop_default,
+    .elapsed = oil_timer_elapsed_default,
+    .destroy = oil_timer_destroy_default,
+    .precise = 1e-8,
+};
+</VARIABLE>
+
+<VARIABLE>
+<NAME>oil_timer_class</NAME>
+OilTimerClass oil_randize_array = {
+    .new = oil_timer_new_default,
+    .start = oil_timer_start_default,
+    .stop = oil_timer_stop_default,
+    .elapsed = oil_timer_elapsed_default,
+    .destroy = oil_timer_destroy_default,
+    .precise = 1e-8,
+};
+</VARIABLE>
+
+<VARIABLE>
+<NAME>oil_profiler_default</NAME>
+OilProfiler oil_profiler_default = {
+    .begin = oil_profiler_begin,
+    .end = oil_profiler_end,
+    .start = oil_profiler_start,
+    .stop = oil_profiler_stop,
+    .data = NULL,
+};
+</VARIABLE>
+
+<VARIABLE>
+<NAME>oil_checker_default</NAME>
+OilChecker oil_checker_default = {
+    .init = oil_checker_init,
+    .generate_sample = oil_checker_sample_generator,
+    .check_result = oil_checker_check_result,
+    .uninit = oil_checker_uninit,
+    .data = NULL,
+};
+</VARIABLE>
+
+<FUNCTION>
+<NAME>oil_error_gerror</NAME>
+<RETURNS>void </RETURNS>
+GError *gerror
+</FUNCTION>
+
+<FUNCTION>
+<NAME>oil_error_gerror</NAME>
+<RETURNS>void </RETURNS>
+GError *gerror
+</FUNCTION>
+
+<FUNCTION>
+<NAME>oil_warning_gerror</NAME>
+<RETURNS>void </RETURNS>
+GError *gerror
+</FUNCTION>
+
+<FUNCTION>
+<NAME>oil_timestamp</NAME>
+<RETURNS>void </RETURNS>
+gdouble *timestamp
+</FUNCTION>
+
+<FUNCTION>
+<NAME>oil_log_detail</NAME>
+<RETURNS>void </RETURNS>
+GPrintFunc g_logfunc, gchar *format, ...
+</FUNCTION>
+
+<FUNCTION>
+<NAME>oil_oops</NAME>
+<RETURNS>void </RETURNS>
+gchar *format, ...
+</FUNCTION>
+

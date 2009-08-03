@@ -114,9 +114,9 @@ AC_CONFIG_FILES([oilcore.pc
                 oiltest/Makefile
                 oiltest/tests/Makefile
                 docs/Makefile
+                docs/version.xml
                 docs/oilcore/Makefile
                 docs/oiltest/Makefile
-                docs/oilfuncs/Makefile
                 oilfuncs/Makefile
                 oilfuncs/ref/Makefile
                 oilfuncs/i386/Makefile

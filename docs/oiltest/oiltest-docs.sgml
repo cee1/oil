@@ -1,0 +1,106 @@
+<?xml version="1.0"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+               "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd"
+[
+  <!ENTITY % local.common.attrib "xmlns:xi  CDATA  #FIXED 'http://www.w3.org/2003/XInclude'">
+  <!ENTITY version SYSTEM "../version.xml">
+  <!ENTITY oil_Compiling SYSTEM "compiling.sgml">
+  <!ENTITY oil_Prototype_Syntax SYSTEM "prototype-syntax.sgml">
+  <!ENTITY oil_Reg_Classes SYSTEM "oil-regclasses.xml">
+  <!ENTITY oil_Reg_Impls SYSTEM "oil-regimpls.xml">
+  <!ENTITY oil_Tester SYSTEM "xml/tester.xml">
+  <!ENTITY oil_Test_Config SYSTEM "xml/test_config.xml">
+  <!ENTITY oil_Parse_Prototype_String SYSTEM "xml/parse_prototype_string.xml">
+  <!ENTITY oil_Profiler SYSTEM "xml/profiler.xml">
+  <!ENTITY oil_Checker SYSTEM "xml/checker.xml">
+  <!ENTITY oil_Test_Log SYSTEM "xml/test_log.xml">
+  <!ENTITY oil_Timer SYSTEM "xml/timer.xml">
+  <!ENTITY oil_Randomize_Functions SYSTEM "xml/randomize_functions.xml">
+  <!ENTITY oil_Util_Misc SYSTEM "xml/util_misc.xml">
+]>
+<book id="index">
+  <bookinfo>
+    <title>oiltest Reference Manual</title>
+    <releaseinfo>
+      for oiltest &version;
+    </releaseinfo>
+  </bookinfo>
+
+  <chapter id="oiltest-overview">
+    <title>OverView</title>
+    &oil_Compiling;
+    &oil_Prototype_Syntax;
+  </chapter>
+  <chapter id="use_oiltest">
+    <title>Use oiltest</title>
+    <para>
+    Typical usage oiltest does not involve many functions. Assume you start a project foo, which provides a series of public functions and their implements on some platforms. You need:
+    </para>
+    <itemizedlist>
+    <listitem><para>
+    Write a file contains all declarations of the public functions.</para>
+    <example><title>foo.def</title><programlisting>
+/* name of function class is "rgb2rgba", the reference function should be rgb2rgba_ref */
+void rgb2rgba (uint8_t *d_4xn, uint8_t* s_3xn, int n);
+void composite_over_argb (uint32_t *i_n, uint32_t *s1_n, int n);
+void squaresum_f64 (double *d, double *s, int n);
+void copy8x8_u8 (uint8_t *d_8x8, int ds, uint8_t *s_8x8, int ss);</programlisting>
+    </example></listitem>
+    <listitem><para>
+    Make a new directory "ref", and write the reference implements there.
+    The name of reference function should be &lt;function_class&gt;<emphasis>_ref</emphasis>.
+    </para></listitem>
+    <listitem><para>
+    Classify other implements in a pre-platform way and for each platform, 
+    write a file to register implements.</para>
+    <example><title>i386.reg and mmx.reg</title>
+    <para>
+    Assuming you'v written an implement using MMX, it is preferred to place this implement in the directory "i386/mmx". 
+    Now write the implements register files in i386 and mmx directories.</para>
+    <programlisting># file: i386.ref
+[include]
+mmx/mmx.reg</programlisting>
+    <programlisting># file: mmx.ref
+[OIL_FLAG (OIL_FLAGBIT_i386_MMX)]
+oil_copy8x8_u8.mmx = oil_copy8x8_u8_mmx</programlisting>
+    </example></listitem>
+    <listitem><para>
+    Use oil-regclasses and oil-regimpls to process the classes and implements register files.
+    </para>
+    <example><title>Using oil-regclasses and oil-regimpls</title>
+    <programlisting>
+# Will generate foo.c foo.h foo_register_classes.c foo_marshal.c foo_marshal.h
+oil-regclasses foo.def
+
+# Use autotool to detect the current platform
+# and generate a foo.reg file including the current platform in the top-level directory
+# Will generate register_implements.c
+oil-regimpls foo.reg</programlisting>
+    </example></listitem>
+    <listitem><para>
+    Use and modify the generated files.
+    </para></listitem>
+    </itemizedlist>   
+    &oil_Tester;
+    &oil_Test_Config;
+  </chapter>
+  <chapter id="extend_oiltest">
+    <title>Extend oiltest</title>
+    &oil_Parse_Prototype_String;
+    &oil_Profiler;
+    &oil_Checker;
+    &oil_Test_Log;
+    &oil_Timer;
+    &oil_Randomize_Functions;
+    &oil_Util_Misc;
+  </chapter>
+  <chapter id="extent_oiltest">
+    <title>oiltest Tools</title>
+    &oil_Reg_Classes;
+    &oil_Reg_Impls;
+  </chapter>
+  
+  <index>
+    <title>Index</title>
+  </index>
+</book>

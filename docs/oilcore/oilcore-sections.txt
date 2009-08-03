@@ -1,0 +1,35 @@
+<INCLUDE>oilcore.h</INCLUDE>
+
+<SECTION>
+<TITLE>Function Class</TITLE>
+<FILE>function_class</FILE>
+OilClass
+OilImplementVisitor
+OilClassVisitor
+oil_class_init
+oil_class_uninit
+oil_class_register
+oil_class_get
+oil_class_remove
+oil_class_remove_all
+oil_class_add_implement
+oil_class_foreach
+oil_class_remove_implement
+oil_class_clear_implements
+oil_class_implements_foreach
+oil_class_active_implement
+oil_class_get_active_implement
+oil_class_add_data
+oil_class_get_name
+oil_class_get_data
+oil_class_get_reference
+</SECTION>
+
+<SECTION>
+<TITLE>CPU detection</TITLE>
+<FILE>cpu_detection</FILE>
+OilCPUFlagBits
+OIL_FLAG
+oil_cpu_get_flags
+</SECTION>
+

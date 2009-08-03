@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+               "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd"
+[
+  <!ENTITY % local.common.attrib "xmlns:xi  CDATA  #FIXED 'http://www.w3.org/2003/XInclude'">
+  <!ENTITY version SYSTEM "../version.xml">
+  <!ENTITY oil_CPU SYSTEM "xml/cpu_detection.xml">
+  <!ENTITY oil_Class SYSTEM "xml/function_class.xml">
+]>
+<book id="index">
+  <bookinfo>
+    <title>oilcore Reference Manual</title>
+    <releaseinfo>
+      for oilcore &version;
+    </releaseinfo>
+  </bookinfo>
+
+  <chapter id="oilcore">
+    <title>OIL Core functions</title>
+    <para>
+      The OIL Core functions provide a mechanism of registering new function class and adding new implement to an existing function class.
+    </para>
+    <para>
+      A function class typically has two or more implements. These implements have the same prototype and function, and only one of them is activated, which means a public function pointer corresponding to the function class point that implement.
+    </para>
+    <para>
+    You can using oilcore to manager a list of function classes and implements, and select the best implement for each class, according to what features the CURRENT CPU has and some pre-done tests. The tests can be performed with another module of oil -- oiltest.
+    </para>
+    
+    &oil_Class;
+    &oil_CPU;
+  </chapter>
+  <index>
+    <title>Index</title>
+  </index>
+  <index role="deprecated">
+    <title>Index of deprecated symbols</title>
+  </index>
+</book>

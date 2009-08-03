@@ -1,0 +1,73 @@
+<refentry id="oil-regclasses">
+
+<refmeta>
+<refentrytitle>oil-regclasses</refentrytitle>
+<manvolnum>1</manvolnum>
+</refmeta>
+
+<refnamediv>
+<refname>oil-regclasses</refname>
+<refpurpose>Auto generate function classes related code</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+<cmdsynopsis>
+<command>oil-regclasses</command>
+<arg choice="opt" rep="repeat">option</arg>
+<arg>class_definition_file</arg>
+</cmdsynopsis>
+</refsynopsisdiv>
+
+<refsect1><title>Description</title>
+<para><command>oil-regclasses</command> is a utility to generate class registering and attaching code</para>
+<para><command>oil-regclasses</command> will generate 6 files:</para>
+<itemizedlist>
+<listitem><para>
+&lt;class_definition_file&gt;.c -- Declare public function symbols
+</para></listitem>
+<listitem><para>
+&lt;class_definition_file&gt;.h -- Public header for users of your module to include, you may modify it 
+</para></listitem>
+<listitem><para>
+&lt;class_definition_file&gt;_register_classes.c -- Contains a function named "&lt;class_definition_file&gt;_register_classes ()", which will register all classes listed in the class definition file
+</para></listitem>
+<listitem><para>
+&lt;class_definition_file&gt;_attach_classes.c -- Contains a function named "&lt;class_definition_file&gt;_attach_classes ()", which will attach all classes listed in the class definition file with testing information
+</para></listitem>
+<listitem><para>
+&lt;class_definition_file&gt;_marshal.c &lt;class_definition_file&gt;_marshal.h -- Some marshal functions.
+</para></listitem>
+</itemizedlist>
+<para>Here is an example of class definition file</para>
+<example><title>foo.def</title>
+<programlisting>
+# register function class "copy8x8_u8"
+void copy8x8_u8 (uint8_t *d_8x8, int ds, uint8_t *s_8x8, int ss);
+
+# register function class "squaresum_f64"
+void squaresum_f64 (double *d, double *s, int n);
+
+# register function class "mas8_u8_l15"
+void mas8_u8_l15 (uint8_t *d, uint8_t *s1_np7, int16_t *s2_8, int16_t *s3_2, int
+n);</programlisting></example>
+<refsect2><title>Options</title>
+<variablelist>
+
+<varlistentry>
+<term><option>-h</option>, <option>--help</option></term>
+<listitem><para>
+print help and exit
+</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><option>-f</option>, <option>--force</option></term>
+<listitem><para>
+force overwrite exists files
+</para></listitem>
+</varlistentry>
+
+</variablelist>
+</refsect2>
+</refsect1>
+</refentry>

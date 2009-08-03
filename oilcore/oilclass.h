@@ -37,7 +37,7 @@ typedef int (*OilImplementVisitor) (
 /**
  * OilClassVisitor:
  * @cls_name: name of the function class
- * @cls:
+ * @cls: an #OilClass
  * @user_data: see oil_class_foreach()
  *
  * see oil_class_foreach(), for each class call it

@@ -9,6 +9,36 @@
 #include "oilutil.h"
 #include "oiltestconfig.h"
 
+/**
+ * SECTION:profiler
+ * @short_description: The profiler.
+ * 
+ * The profiler will be internally used like this:
+ * |[
+ * /&ast; The profiler is registered when calling oil_test_attach_class_full() &ast;/
+ * profiler->begin (profiler, iterations, test_function);
+ *
+ * for (i = 0; i < iterations; i++) {
+ *     profiler->start (profiler);
+ *     test_function (arg1, arg2, ...);
+ *     profiler->end (profiler);
+ * }
+ * 
+ * /&ast; Gets summary &ast;/
+ * gdouble average_time = profiler->end (profiler);
+ * ]|
+ */
+
+/**
+ * oil_profiler_default:
+ * 
+ * The default profiler. 
+ * <note>
+ * <para>
+ * all member functions of the default profiler are not thread-safe.
+ * </para>
+ * </note>
+ */
 OilProfiler oil_profiler_default = {
     .begin = oil_profiler_begin,
     .end = oil_profiler_end,
@@ -30,6 +60,14 @@ struct _profiler_data {
     guint *hist_count;
 };
 
+/**
+ * oil_profiler_begin:
+ * @profiler: the profiler
+ * @iterations: the times the @func should be runned 
+ * @func: the address of the function
+ *
+ * Arm the profiler.
+ */
 void oil_profiler_begin (
         OilProfiler *profiler,
         gint iterations,
@@ -50,6 +88,14 @@ void oil_profiler_begin (
     profiler->data = (gpointer) data;
 }
 
+/**
+ * oil_profiler_end:
+ * @profiler: the profiler
+ * 
+ * Get the summary of the tested function, and finalize the profiler.
+ *
+ * Returns: average time of the tested function spent, in seconds.
+ */
 gdouble oil_profiler_end (OilProfiler *profiler)
 {
     struct _profiler_data *data = (struct _profiler_data *) profiler->data;
@@ -97,6 +143,12 @@ gdouble oil_profiler_end (OilProfiler *profiler)
     return ave;
 }
 
+/**
+ * oil_profiler_start:
+ * @profiler: the profiler
+ *
+ * Activate the profiler, do profiling
+ */
 void oil_profiler_start (OilProfiler *profiler)
 {
     struct _profiler_data *data = (struct _profiler_data *) profiler->data;
@@ -104,6 +156,12 @@ void oil_profiler_start (OilProfiler *profiler)
     oil_timer_class.start (data->timer);
 }
 
+/**
+ * oil_profiler_stop:
+ * @profiler: the profiler
+ *
+ * Deactivate the profiler, do profiling
+ */
 void oil_profiler_stop (OilProfiler *profiler)
 {
     struct _profiler_data *data = (struct _profiler_data *) profiler->data;

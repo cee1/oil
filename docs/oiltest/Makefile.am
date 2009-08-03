@@ -37,11 +37,15 @@ IGNORE_HFILES =
 
 # Images to copy into HTML directory.
 # e.g. HTML_IMAGES=$(top_srcdir)/gtk/stock-icons/stock_about_24.png
-HTML_IMAGES =
+HTML_IMAGES = array.png
 
 # Extra SGML files that are included by $(DOC_MAIN_SGML_FILE).
 # e.g. content_files=running.sgml building.sgml changes-2.0.sgml
-content_files =
+content_files =             \
+    compiling.sgml          \
+    prototype-syntax.sgml   \
+    oil-regclasses.xml      \
+    oil-regimpls.xml
 
 # SGML files where gtk-doc abbrevations (#GtkWidget) are expanded
 # These files must be listed here *and* in content_files
