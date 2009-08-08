@@ -23,13 +23,13 @@ supported_types_base = {
 }
 
 h_header = """/*
- * %(def_name)s.h:
+ * %(file_name)s-slots.h:
  *  Auto generate from %(def_file)s
  *  It will be rewritten next time run oil-genclasses
  */
 
-#ifndef __%(def_name_upper)s_H__
-#define __%(def_name_upper)s_H__
+#ifndef __%(encoded_file_name_upper)s_SLOTS_H__
+#define __%(encoded_file_name_upper)s_SLOTS_H__
 
 #include <inttypes.h>
 
@@ -50,20 +50,20 @@ h_tail = """
 }
 #endif
 
-#endif /* __%(def_name_upper)s__ */
+#endif /* __%(encoded_file_name_upper)s_SLOTS_H__ */
 
 """
 
 h_marshal_header = """/* 
- * %(def_name)s_marshal.h:
+ * %(file_name)s-marshal.h:
  *  Auto generate from %(def_file)s
  *  It will be rewritten next time run oil-regclasses
  *  
  *  declares marshal functions for auto testing
  */
 
-#ifndef __%(def_name_upper)s_MARSHAL_H__
-#define __%(def_name_upper)s_MARSHAL_H__
+#ifndef __%(encoded_file_name_upper)s_MARSHAL_H__
+#define __%(encoded_file_name_upper)s_MARSHAL_H__
 
 #include <inttypes.h>
 #include <oilparameter.h>
@@ -81,13 +81,13 @@ h_marshal_tail = """
 }
 #endif
 
-#endif /* __%(def_name_upper)s_MARSHAL_H__ */
+#endif /* __%(encoded_file_name_upper)s_MARSHAL_H__ */
 
 """
 
 
 c_header = """/* 
- * %(def_name)s.c:
+ * %(file_name)s-slots.c:
  *  Auto generate from %(def_file)s
  *  It will be rewritten next time run oil-regclasses
  *  
@@ -107,14 +107,14 @@ void (*%(cls_name)s) (%(param_list)s);
 c_tail = "\n"
 
 c_marshal_header = """/* 
- * %(def_name)s_marshal.c:
+ * %(file_name)s-marshal.c:
  *  Auto generate from %(def_file)s
  *  It will be rewritten next time run oil-regclasses
  * 
  *  declares marshal functions for auto testing
  */
  
-#include "%(def_name)s_marshal.h"
+#include "%(file_name)s-marshal.h"
 """
 c_marshal_line = """
 void %(marshal)s (void *func, OilGenericType *args, OilProfiler *profiler)
@@ -130,14 +130,14 @@ void %(marshal)s (void *func, OilGenericType *args, OilProfiler *profiler)
 c_marshal_tail = "\n"
 
 c_register_classes_header = """/* 
- * %(def_name)s_register_classes.c:
+ * %(file_name)s-register-classes.c:
  *  Auto generate from %(def_file)s
  *  It will be rewritten next time run oil-regclasses
  *  Generate the class registration function
  */
 #include <oilclass.h>
 #include <inttypes.h>
-void %(def_name)s_register_classes ()
+void %(encoded_file_name)s_register_classes ()
 {
 """
 c_register_classes_line = """
@@ -150,7 +150,7 @@ c_register_classes_tail = """
 """
 
 c_attach_classes_header = """/* 
- * %(def_name)s_attach_classes.c:
+ * %(file_name)s-attach-classes.c:
  *  Auto generate from %(def_file)s
  *  It will be rewritten next time run oil-regclasses
  *  Generate function that attaching class_data to classes
@@ -158,9 +158,9 @@ c_attach_classes_header = """/*
 #include <oiltester.h>
 #include <oilchecker.h>
 #include <oilprofiler.h>
-#include "%(def_name)s_marshal.h"
+#include "%(file_name)s-marshal.h"
 
-void %(def_name)s_attach_classes ()
+void %(encoded_file_name)s_attach_classes ()
 {
 """
 c_attach_classes_line = """
@@ -181,13 +181,13 @@ class parser (object):
     def __init__ (self, definition, overwrite = False):
         self.src_file = definition
         self.fn = os.path.splitext (definition)[0]
-        self.dst_c = self.fn + '.c'
-        self.dst_h = self.fn + '.h'
-        self.dst_rcc = self.fn + '_register_classes.c'
-        self.dst_acc = self.fn + '_attach_classes.c'
+        self.dst_c = self.fn + '-slots.c'
+        self.dst_h = self.fn + '-slots.h'
+        self.dst_rcc = self.fn + '-register-classes.c'
+        self.dst_acc = self.fn + '-attach-classes.c'
         
-        self.dst_mh = self.fn + '_marshal.h'
-        self.dst_mc = self.fn + '_marshal.c'
+        self.dst_mh = self.fn + '-marshal.h'
+        self.dst_mc = self.fn + '-marshal.c'
         
         if not overwrite:
             for f in (self.dst_c, self.dst_rcc, self.dst_acc, self.dst_mh, self.dst_mc):
@@ -207,9 +207,10 @@ class parser (object):
     
     def parse (self):
         tmpl_args = {
+            'file_name': self.fn.replace ('"', '\\"'),
             'def_file': self.src_file,
-            'def_name': self.gen_canonical_id (self.fn),
-            'def_name_upper': self.gen_canonical_id (self.fn).upper ()
+            'encoded_file_name': self.gen_canonical_id (self.fn),
+            'encoded_file_name_upper': self.gen_canonical_id (self.fn).upper ()
         }
         all_marshals = set ()
         
@@ -352,9 +353,9 @@ class parser (object):
 
 if __name__ == '__main__':
     usage = """usage: %s <class_definition_file> [--force]
-output: <class_definition_file>.c & <class_definition_file>.h
-        <register_classes.c> & <attach_classes.c>
-        <class_definition_file>_marshal.h & <class_definition_file>_marshal.c"""
+output: <class_definition_file>-slots.c & <class_definition_file>-slots.h
+        <class_definition_file>-register_classes.c & <class_definition_file>-attach_classes.c
+        <class_definition_file>-marshal.h & <class_definition_file>-marshal.c"""
 
     try:
         opts, left = gnu_getopt (sys.argv[1:], 'fh', ['force', 'help'])

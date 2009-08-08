@@ -1,11 +1,11 @@
 /* 
- * oilfuncs.c:
+ * oilfuncs-slots.c:
  *  Auto generate from oilfuncs.def
  *  It will be rewritten next time run oil-regclasses
  *  
  *  declares public function pointers
  */
-#include <inttypes.h>
+#include "oilfuncs-slots.h"
 
 /*
  * oil_copy8x8_u8:

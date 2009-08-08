@@ -1,5 +1,5 @@
 /* 
- * oilfuncs_register_classes.c:
+ * oilfuncs-register-classes.c:
  *  Auto generate from oilfuncs.def
  *  It will be rewritten next time run oil-regclasses
  *  Generate the class registration function

@@ -88,7 +88,7 @@ def gen_canonical_id (raw):
 
 if __name__ == '__main__':
     usage = """usage: %s [--force] <implement_registration>\n
-output: <implement_registration>_register_implements.c"""
+output: <implement_registration>-register-implements.c"""
 
     try:
         opts, left = gnu_getopt (sys.argv[1:], 'fh', ['force', 'help'])
@@ -111,7 +111,7 @@ output: <implement_registration>_register_implements.c"""
     try:
         reg = left[0]
         fn = os.path.splitext (reg)[0]
-        output_fpath = fn + '_register_implements.c'
+        output_fpath = fn + '-register-implements.c'
 
         if not overwrite:
             if os.path.lexists (output_fpath):

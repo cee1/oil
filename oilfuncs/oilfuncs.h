@@ -8,17 +8,11 @@
 #define __OILFUNCS_H__
 
 #include <inttypes.h>
+#include <oilfuncs-slots.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-/*
- * oil_copy8x8_u8:
- *   oilfuncs.def:1 
- *   void oil_copy8x8_u8 (uint8_t *d_8x8, int ds, uint8_t *s_8x8, int ss);
- */
-extern void (*oil_copy8x8_u8) (uint8_t * d_8x8, int ds, uint8_t * s_8x8, int ss);
 
 extern void oilfuncs_register_classes ();
 extern void oilfuncs_register_implements ();

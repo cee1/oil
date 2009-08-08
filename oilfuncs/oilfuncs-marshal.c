@@ -1,12 +1,12 @@
 /* 
- * oilfuncs_marshal.c:
+ * oilfuncs-marshal.c:
  *  Auto generate from oilfuncs.def
  *  It will be rewritten next time run oil-regclasses
  * 
  *  declares marshal functions for auto testing
  */
  
-#include "oilfuncs_marshal.h"
+#include "oilfuncs-marshal.h"
 
 void OIL_MARSHAL__UINT8_Tp_INT_UINT8_Tp_INT (void *func, OilGenericType *args, OilProfiler *profiler)
 {

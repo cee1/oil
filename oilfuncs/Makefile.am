@@ -2,13 +2,13 @@ SUBDIRS = ref tests
 
 lib_LTLIBRARIES = liboilfuncs-@OIL_MAJOR_VERSION@.@OIL_MINOR_VERSION@.la liboilfuncs-test-@OIL_MAJOR_VERSION@.@OIL_MINOR_VERSION@.la
 
-liboilfuncs_@OIL_MAJOR_VERSION@_@OIL_MINOR_VERSION@_la_SOURCES = oilfuncs_register_classes.c oilfuncs_register_implements.c oilfuncs.c oilfuncs.h
+liboilfuncs_@OIL_MAJOR_VERSION@_@OIL_MINOR_VERSION@_la_SOURCES = oilfuncs-register-classes.c oilfuncs-register-implements.c oilfuncs-slots.c oilfuncs-slots.h
 liboilfuncs_@OIL_MAJOR_VERSION@_@OIL_MINOR_VERSION@_la_LIBADD =                     \
     $(top_builddir)/oilcore/liboilcore-@OIL_MAJOR_VERSION@.@OIL_MINOR_VERSION@.la   \
     ref/liboilref.la
 liboilfuncs_@OIL_MAJOR_VERSION@_@OIL_MINOR_VERSION@_la_CPPFLAGS = -I$(top_srcdir)/oilcore
 
-liboilfuncs_test_@OIL_MAJOR_VERSION@_@OIL_MINOR_VERSION@_la_SOURCES = oilfuncs_attach_classes.c oilfuncs_marshal.c oilfuncs_marshal.h
+liboilfuncs_test_@OIL_MAJOR_VERSION@_@OIL_MINOR_VERSION@_la_SOURCES = oilfuncs-attach-classes.c oilfuncs-marshal.c oilfuncs-marshal.h
 liboilfuncs_test_@OIL_MAJOR_VERSION@_@OIL_MINOR_VERSION@_la_LIBADD =    \
     $(GLIB_LIBS)                                                        \
     $(top_builddir)/oiltest/liboiltest-@OIL_MAJOR_VERSION@.@OIL_MINOR_VERSION@.la
@@ -35,13 +35,13 @@ impl_reglist += "mips/mips.reg\n"
 endif
 
 oilincludedir = $(includedir)/oil
-oilinclude_HEADERS = oilfuncs.h
+oilinclude_HEADERS = oilfuncs.h oilfuncs-slots.h
 
 REG_CLASSES = $(top_srcdir)/oiltest/oil-regclasses
-$(domain).c $(domain).h $(domain)_register_classes.c $(domain)_attach_classes.c $(domain)_marshal.c $(domain)_marshal.h: $(domain).def; python $(REG_CLASSES) $(domain).def
+$(domain)-slots.c $(domain)-slots.h $(domain)-register-classes.c $(domain)-attach-classes.c $(domain)-marshal.c $(domain)-marshal.h: $(domain).def; python $(REG_CLASSES) -f $(domain).def
 
 REG_IMPLEMENTS = $(top_srcdir)/oiltest/oil-regimpls
-$(domain)_register_implements.c: $(domain).reg; python $(REG_IMPLEMENTS) -f $(domain).reg
+$(domain)-register-implements.c: $(domain).reg; python $(REG_IMPLEMENTS) -f $(domain).reg
 
 $(domain).reg:; echo -e $(impl_reglist) > $(domain).reg
 

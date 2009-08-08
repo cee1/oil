@@ -1,5 +1,5 @@
 /* 
- * oilfuncs_marshal.h:
+ * oilfuncs-marshal.h:
  *  Auto generate from oilfuncs.def
  *  It will be rewritten next time run oil-regclasses
  *  

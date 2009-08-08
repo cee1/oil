@@ -1,5 +1,5 @@
 /* 
- * oilfuncs_attach_classes.c:
+ * oilfuncs-attach-classes.c:
  *  Auto generate from oilfuncs.def
  *  It will be rewritten next time run oil-regclasses
  *  Generate function that attaching class_data to classes
@@ -7,7 +7,7 @@
 #include <oiltester.h>
 #include <oilchecker.h>
 #include <oilprofiler.h>
-#include "oilfuncs_marshal.h"
+#include "oilfuncs-marshal.h"
 
 void oilfuncs_attach_classes ()
 {
