@@ -38,6 +38,11 @@ Makefile.in
 /oiltest*.pc
 /oilfuncs/oilfuncs.reg
 /oilfuncs/oilfuncs-register-implements.c
+/oilfuncs/oilfuncs-slots.h
+/oilfuncs/oilfuncs-slots.c
+/oilfuncs/oilfuncs-register-classes.c
+/oilfuncs/oilfuncs-marshal.c
+/oilfuncs/oilfuncs-attach-classes.c
 /docs/version.xml
 /docs/oilcore/html-build.stamp
 /docs/oilcore/html.stamp

@@ -8,7 +8,7 @@ liboilfuncs_@OIL_MAJOR_VERSION@_@OIL_MINOR_VERSION@_la_LIBADD =                 
     ref/liboilref.la
 liboilfuncs_@OIL_MAJOR_VERSION@_@OIL_MINOR_VERSION@_la_CPPFLAGS = -I$(top_srcdir)/oilcore
 
-liboilfuncs_test_@OIL_MAJOR_VERSION@_@OIL_MINOR_VERSION@_la_SOURCES = oilfuncs-attach-classes.c oilfuncs-marshal.c oilfuncs-marshal.h
+liboilfuncs_test_@OIL_MAJOR_VERSION@_@OIL_MINOR_VERSION@_la_SOURCES = oilfuncs-attach-classes.c oilfuncs-marshal.c
 liboilfuncs_test_@OIL_MAJOR_VERSION@_@OIL_MINOR_VERSION@_la_LIBADD =    \
     $(GLIB_LIBS)                                                        \
     $(top_builddir)/oiltest/liboiltest-@OIL_MAJOR_VERSION@.@OIL_MINOR_VERSION@.la
@@ -38,7 +38,7 @@ oilincludedir = $(includedir)/oil
 oilinclude_HEADERS = oilfuncs.h oilfuncs-slots.h
 
 REG_CLASSES = $(top_srcdir)/oiltest/oil-regclasses
-$(domain)-slots.c $(domain)-slots.h $(domain)-register-classes.c $(domain)-attach-classes.c $(domain)-marshal.c $(domain)-marshal.h: $(domain).def; python $(REG_CLASSES) -f $(domain).def
+$(domain)-slots.c $(domain)-slots.h $(domain)-register-classes.c $(domain)-attach-classes.c $(domain)-marshal.c: $(domain).def; python $(REG_CLASSES) --rebuild-register --rebuild-attach $(domain).def
 
 REG_IMPLEMENTS = $(top_srcdir)/oiltest/oil-regimpls
 $(domain)-register-implements.c: $(domain).reg; python $(REG_IMPLEMENTS) -f $(domain).reg

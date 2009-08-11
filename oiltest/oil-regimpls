@@ -78,12 +78,15 @@ void %s_register_implements ()
     output.flush ()
 
 def gen_canonical_id (raw):
-    if not re.compile ('^\w+$').match (raw):
+    if not re.compile ('^[\w\-\. \t]+$').match (raw):
         ret = b64encode (raw, '__')
         ret = ret.replace ('=', '_')
     else:
-        ret = raw
+        ret = re.compile ('\W+').subn ("_", raw)[0]
     
+    if not re.compile ('^[a-zA-Z_]').match (ret):
+        ret = 'o' + ret
+
     return ret
 
 if __name__ == '__main__':
