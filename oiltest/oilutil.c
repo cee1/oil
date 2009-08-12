@@ -10,35 +10,19 @@
 #include "oilutil.h"
 
 /**
+ * SECTION:randomize_functions
+ * @short_description: randomize functions
+ * 
+ * Randomize functions, used to generate samples for testing.
+ */
+
+/**
  * oil_randize_array:
  * 
  * Function called by #oil_checker_default, to randomize the testing array.
  * You can overload it with your own function.
  */
 OilRandizeArray oil_randize_array = oil_randize_array_default;
-
-/**
- * oil_timer_class:
- * 
- * The timer used by #oil_profiler_default.
- * You can change to your own timer, or customize the members
- */
-OilTimerClass oil_timer_class = {
-    .new = oil_timer_new_default,
-    .start = oil_timer_start_default,
-    .stop = oil_timer_stop_default,
-    .elapsed = oil_timer_elapsed_default,
-    .destroy = oil_timer_destroy_default,
-    .precise = 1e-8,
-};
-
-
-/**
- * SECTION:randomize_functions
- * @short_description: randomize functions
- * 
- * Randomize functions, used to generate samples for testing.
- */
 
 /**
  * oil_rand_u8:
@@ -260,57 +244,45 @@ G_STMT_START {                                          \
  * ]|
  */
 
-/**
- * oil_timer_new_default:
- * 
- * Creates a timer.
- * 
- * Returns: a #gpointer point the newly created timer, should be freed with
- * oil_timer_destroy_default
- */
-gpointer oil_timer_new_default ()
+#if defined HAVE_CLOCK_THREAD_CPUTIME_ID || defined HAVE_CLOCK_MONOTONIC
+static gpointer oil_timer_new_default ()
 {
     return g_try_new0 (struct timespec, 2);
 }
 
-/**
- * oil_timer_start_default:
- * @timer: a timer
- * 
- * Starts the timer.
- */
-void oil_timer_start_default (gpointer timer)
+static void oil_timer_start_default (gpointer timer)
 {
     struct timespec *start = (struct timespec *) timer;
 
-    if (clock_gettime (CLOCK_THREAD_CPUTIME_ID, start))
+#ifdef HAVE_CLOCK_THREAD_CPUTIME_ID
+# define _TIMER CLOCK_THREAD_CPUTIME_ID
+#else /* defined HAVE_CLOCK_MONOTONIC */
+# define _TIMER CLOCK_MONOTONIC
+#endif
+
+    if (clock_gettime (_TIMER, start))
         g_error ("%s\n", g_strerror (errno));
+
+#undef _TIMER
 }
 
-/**
- * oil_timer_stop_default:
- * @timer: a timer
- *
- * Stops the timer.
- */
-void oil_timer_stop_default (gpointer timer)
+static void oil_timer_stop_default (gpointer timer)
 {
     struct timespec *stop = (struct timespec *) timer + 1;
-    
-    if (clock_gettime (CLOCK_THREAD_CPUTIME_ID, stop))
+
+#ifdef HAVE_CLOCK_THREAD_CPUTIME_ID
+# define _TIMER CLOCK_THREAD_CPUTIME_ID
+#else /* defined HAVE_CLOCK_MONOTONIC */
+# define _TIMER CLOCK_MONOTONIC
+#endif
+
+    if (clock_gettime (_TIMER, stop))
         g_error ("%s\n", g_strerror (errno));
+
+#undef _TIMER
 }
 
-/**
- * oil_timer_elapsed_default:
- * @timer: a timer
- * @ret2: reversed for customize this function, return more information.
- * 
- * Get the elapsed time, between last start and stop
- *
- * Returns: a #gdouble, in seconds
- */
-gdouble oil_timer_elapsed_default (gpointer timer, gulong *ret2)
+static gdouble oil_timer_elapsed_default (gpointer timer, gulong *ret2)
 {
     
     struct timespec *start = (struct timespec *) timer;
@@ -319,16 +291,43 @@ gdouble oil_timer_elapsed_default (gpointer timer, gulong *ret2)
     return (stop->tv_sec - start->tv_sec) * 1.0 * 1e9 + (stop->tv_nsec - start->tv_nsec) / 1e9;
 }
 
-/**
- * oil_timer_destroy_default:
- * @timer: a timer
- *
- * Destroy the timer.
- */
 void oil_timer_destroy_default (gpointer timer)
 {
     g_free (timer);
 }
+/**
+ * oil_timer_default:
+ * 
+ * You can activate this timer by "oil_timer = &oil_timer_default"
+ */
+OilTimerClass oil_timer_default = {
+    .new = oil_timer_new_default,
+    .start = oil_timer_start_default,
+    .stop = oil_timer_stop_default,
+    .elapsed = oil_timer_elapsed_default,
+    .destroy = oil_timer_destroy_default,
+    .precise = 1e-8,
+};
+#else
+
+OilTimerClass oil_timer_default = {
+    .new = (OilTimerNew) g_timer_new,
+    .start = (OilTimerStart) g_timer_start,
+    .stop = (OilTimerStop) g_timer_stop,
+    .elapsed = (OilTimerElapsed) g_timer_elapsed,
+    .destroy =  (OilTimerDestroy) g_timer_destroy,
+    .precise = 1e-8,
+};
+
+#endif /* HAVE_CLOCK_THREAD_CPUTIME_ID || defined HAVE_CLOCK_MONOTONIC */
+
+/**
+ * oil_timer:
+ * 
+ * The timer used by #oil_profiler_default.
+ * You can change to your own timer, the default is #oil_timer_default
+ */
+OilTimerClass *oil_timer = &oil_timer_default;
 
 /**
  * SECTION:util_misc
@@ -362,4 +361,3 @@ gchar *oil_flags_to_string (guint flags)
 
     return ret;
 }
-

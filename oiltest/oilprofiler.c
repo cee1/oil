@@ -76,7 +76,7 @@ void oil_profiler_begin (
     struct _profiler_data *data = g_try_new0 (struct _profiler_data, 1);
     
     data->func = func;
-    data->timer = oil_timer_class.new ();
+    data->timer = oil_timer->new ();
     data->iterations = iterations;
     data->total = 0;
     data->min = G_MAXDOUBLE;
@@ -135,7 +135,7 @@ gdouble oil_profiler_end (OilProfiler *profiler)
     
     /* cleanup */
     profiler->data = NULL;
-    oil_timer_class.destroy (data->timer);
+    oil_timer->destroy (data->timer);
     g_free (data->hist_time);
     g_free (data->hist_count);
     g_free (data);
@@ -153,7 +153,7 @@ void oil_profiler_start (OilProfiler *profiler)
 {
     struct _profiler_data *data = (struct _profiler_data *) profiler->data;
     
-    oil_timer_class.start (data->timer);
+    oil_timer->start (data->timer);
 }
 
 /**
@@ -168,15 +168,15 @@ void oil_profiler_stop (OilProfiler *profiler)
     gdouble elapsed;
     gint i;
     
-    oil_timer_class.stop (data->timer);
-    elapsed = oil_timer_class.elapsed (data->timer, NULL);
+    oil_timer->stop (data->timer);
+    elapsed = oil_timer->elapsed (data->timer, NULL);
     
     data->total += elapsed;
     if (elapsed < data->min)
         data->min = elapsed;
     
     for (i = 0; i < data->hist_n; i++) {
-        if (ABS (elapsed - data->hist_time[i]) < oil_timer_class.precise) {
+        if (ABS (elapsed - data->hist_time[i]) < oil_timer->precise) {
             data->hist_count[i]++;
             break;
         }

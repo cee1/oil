@@ -92,16 +92,56 @@ G_STMT_START {                                                          \
  */
 #define oil_oops(format, args...) oil_log_detail(g_error, format, ##args)
 
+/**
+ * OilTimerNew:
+ * 
+ * Creates a timer.
+ * 
+ * Returns: a #gpointer point the newly created timer, should be freed with
+ * OilTimerDestroy()
+ */
 typedef gpointer (*OilTimerNew) ();
-typedef void (*OilTimerStamp) (gpointer timer);
+
+/**
+ * OilTimerStart:
+ * @timer: a timer
+ * 
+ * Starts the timer.
+ */
+typedef void (*OilTimerStart) (gpointer timer);
+
+/**
+ * OilTimerStop:
+ * @timer: a timer
+ *
+ * Stops the timer.
+ */
+typedef void (*OilTimerStop) (gpointer timer);
+
+/**
+ * OilTimerElapsed:
+ * @timer: a timer
+ * @ret2: reversed for customize this function, return more information.
+ * 
+ * Get the elapsed time, between last start and stop
+ *
+ * Returns: a #gdouble, in seconds
+ */
 typedef gdouble (*OilTimerElapsed) (gpointer timer, gulong *ret2);
+
+/**
+ * OilTimerDestroy:
+ * @timer: a timer
+ *
+ * Destroy the timer.
+ */
 typedef void (*OilTimerDestroy) (gpointer timer);
 typedef struct _OilTimerClass OilTimerClass;
 
 struct _OilTimerClass {
     OilTimerNew new;
-    OilTimerStamp start;
-    OilTimerStamp stop;
+    OilTimerStart start;
+    OilTimerStop stop;
     OilTimerElapsed elapsed;
     OilTimerDestroy destroy;
     gdouble precise;
@@ -116,7 +156,8 @@ typedef void (*OilRandizeArray) (
         gint post_n);
 
 extern OilRandizeArray oil_randize_array;
-extern OilTimerClass oil_timer_class;
+extern OilTimerClass oil_timer_default;
+extern OilTimerClass *oil_timer;
 
 guint8 oil_rand_u8 (GRand *r);
 gint8 oil_rand_s8 (GRand *r);
@@ -136,12 +177,6 @@ void oil_randize_array_default (
         gint post_n);
 
 gchar *oil_flags_to_string (guint flags);
-
-gpointer oil_timer_new_default ();
-void oil_timer_start_default (gpointer timer);
-void oil_timer_stop_default (gpointer timer);
-gdouble oil_timer_elapsed_default (gpointer timer, gulong *ret2);
-void oil_timer_destroy_default (gpointer timer);
 
 G_END_DECLS
 

@@ -82,16 +82,13 @@ oil_test_log_parameter
 <SUBSECTION>
 OilTimerClass
 OilTimerNew
-OilTimerStamp
+OilTimerStart
+OilTimerStop
 OilTimerElapsed
 OilTimerDestroy
 <SUBSECTION>
-oil_timer_class
-oil_timer_new_default
-oil_timer_start_default
-oil_timer_stop_default
-oil_timer_elapsed_default
-oil_timer_destroy_default
+oil_timer_default
+oil_timer
 </SECTION>
 
 <SECTION>

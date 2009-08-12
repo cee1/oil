@@ -55,28 +55,50 @@ AC_TYPE_UINT8_T
 # Checks for library functions.
 AC_FUNC_MALLOC
 AC_FUNC_REALLOC
-AC_CHECK_FUNCS([clock_gettime memset sqrt strchr strdup])
+AC_CHECK_FUNCS([memset sqrt strchr strdup])
 
+# Checks for oiltest
 PKG_CHECK_MODULES(GLIB, glib-2.0, HAVE_GLIB=yes, HAVE_GLIB=no)
 AC_SUBST(GLIB_LIBS)
 AC_SUBST(GLIB_CFLAGS)
 AC_ARG_ENABLE(oiltest,
 AC_HELP_STRING([--disable-oiltest],[disable oiltest]),
 [case "${enableval}" in
-    yes) HAVE_GLIB=yes ;;
+    yes) ;;
     no) HAVE_GLIB=no ;;
     *) AC_MSG_ERROR(bad value ${enableval} for --disable-oiltest) ;;
 esac])
 AM_CONDITIONAL(HAVE_GLIB, test "x$HAVE_GLIB" = "xyes")
 
-HAVE_OILFUNCS=yes
+OIL_CHECK_CLOCK_GETTIME(CLOCK_THREAD_CPUTIME_ID, HAVE_CLOCK_THREAD_CPUTIME_ID=yes, HAVE_CLOCK_THREAD_CPUTIME_ID=no)
+OIL_CHECK_CLOCK_GETTIME(CLOCK_MONOTONIC, HAVE_CLOCK_MONOTONIC=yes, HAVE_CLOCK_MONOTONIC=no)
+
+AC_ARG_ENABLE(timer,
+AC_HELP_STRING([--enable-timer=<timer>], [available values: CLOCK_THREAD_CPUTIME_ID, CLOCK_MONOTONIC, GTimer]),
+[case "${enableval}" in
+    CLOCK_THREAD_CPUTIME_ID) ;;
+    CLOCK_MONOTONIC) test "x$HAVE_CLOCK_MONOTONIC" = "xyes" && HAVE_CLOCK_THREAD_CPUTIME_ID=no;;
+    GTimer) HAVE_CLOCK_THREAD_CPUTIME_ID=no; HAVE_CLOCK_MONOTONIC=no;;
+    *) AC_MSG_ERROR(bad value ${enableval} for --enable-timer) ;;
+esac])
+
+if test "x$HAVE_CLOCK_THREAD_CPUTIME_ID" = "xyes"; then
+AC_DEFINE(HAVE_CLOCK_THREAD_CPUTIME_ID, 1, [Defined if support and enable thread timer])
+fi
+
+if test "x$HAVE_CLOCK_MONOTONIC" = "xyes"; then
+AC_DEFINE(HAVE_CLOCK_MONOTONIC, 1, [Defined if support and enable monotonic timer])
+fi
+
+# Checks for oilfuncs
 AC_ARG_ENABLE(oilfuncs,
 AC_HELP_STRING([--disable-oilfuncs],[disable pre-implemented oil functions]),
 [case "${enableval}" in
     yes) HAVE_OILFUNCS=yes ;;
     no)  HAVE_OILFUNCS=no ;;
     *) AC_MSG_ERROR(bad value ${enableval} for --disable-oilfuncs) ;;
-esac])
+esac],
+HAVE_OILFUNCS=yes)
 AM_CONDITIONAL(HAVE_OILFUNCS, test "x$HAVE_OILFUNCS" = "xyes")
 
 AC_MSG_CHECKING([check for cpu family])
