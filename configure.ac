@@ -143,8 +143,8 @@ AC_CONFIG_FILES([oilcore.pc
                 oilfuncs/ref/Makefile
                 oilfuncs/i386/Makefile
                 oilfuncs/i386/mmx/Makefile
-                oilfuncs/mips/Makefile
-                oilfuncs/mips/gs2f/Makefile
+                oilfuncs/mips-o32/Makefile
+                oilfuncs/mips-o32/gs2f-o32/Makefile
                 oilfuncs/tests/Makefile],
                 [rm -f ${ac_top_srcdir}/oilfuncs/oilfuncs.reg])
 AC_OUTPUT
