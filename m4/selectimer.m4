@@ -8,9 +8,8 @@ AC_DEFUN([OIL_CHECK_CLOCK_GETTIME],
     int ret = clock_gettime ($1, &ts);
     return ret;]])])
     
-    $CC conftest.c -lrt -o conftest
-    chmod +x conftest
-    ./conftest
+    $CC conftest.c $CFALGS -lrt -o conftest
+    chmod +x conftest && ./conftest
     
     if test $? -eq 0 ; then
         ok='yes'

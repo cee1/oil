@@ -9,6 +9,10 @@
 #include <oilcore.h>
 #include "oilutil.h"
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 /**
  * SECTION:randomize_functions
  * @short_description: randomize functions

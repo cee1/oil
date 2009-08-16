@@ -28,7 +28,7 @@ liboilfuncs_@OIL_MAJOR_VERSION@_@OIL_MINOR_VERSION@_la_LIBADD += i386/liboili386
 impl_reglist += "i386/i386.reg\n"
 endif
 
-if HAVE_MIPS
+if HAVE_MIPS_O32
 SUBDIRS += mips-o32
 liboilfuncs_@OIL_MAJOR_VERSION@_@OIL_MINOR_VERSION@_la_LIBADD += mips-o32/liboilmips-o32.la
 impl_reglist += "mips-o32/mips-o32.reg\n"

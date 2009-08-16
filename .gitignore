@@ -26,6 +26,7 @@ Makefile.in
 /missing
 /mkinstalldirs
 /install-sh
+/oilconfig.h
 /oilcore-*uninstalled.pc
 /oilcore*.pc
 /oilcore/tests/hashtable_test

@@ -1,6 +1,9 @@
 ACLOCAL_AMFLAGS = -I m4
 SUBDIRS = oilcore
 
+oilincludedir = $(includedir)/oil
+oilinclude_HEADERS = oilconfig.h
+
 if HAVE_GLIB
 SUBDIRS += oiltest
 endif

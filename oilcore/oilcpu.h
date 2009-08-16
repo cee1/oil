@@ -6,10 +6,7 @@
 extern "C" {
 #endif
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
+#include <oilconfig.h>
 /**
  * OilCPUFlagBits:
  * 
@@ -17,9 +14,9 @@ extern "C" {
  * Note flagBit is pre-architecture sense: the same flagBit has different meaning in different arch
  */
 typedef enum {
-#ifdef HAVE_MIPS
+#if OIL_ARCH == mips
     OIL_FLAGBIT_GS2F,
-#elif defined HAVE_I386
+#elif OIL_ARCH == i386
     OIL_FLAGBIT_i386_MMX,
 #endif
     OIL_FLAGBIT_NR,

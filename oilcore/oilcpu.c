@@ -13,9 +13,9 @@
  */
 
 char *oil_flags_descriptions[OIL_FLAGBIT_NR] = {
-#ifdef HAVE_MIPS
+#if OIL_ARCH == mips
     "godson_2f",
-#elif defined HAVE_I386
+#elif OIL_ARCH == i386
     "i386_mmx",
 #endif
 };
@@ -31,10 +31,10 @@ unsigned int oil_cpu_get_flags ()
 {
     unsigned int flags = 0;
     
-#ifdef HAVE_MIPS
+#if OIL_ARCH == mips
     /* TODO: detect CPU supported features */
     flags |= OIL_FLAG (OIL_FLAGBIT_GS2F);
-#elif defined HAVE_I386
+#elif OIL_ARCH == i386
     flags |= OIL_FLAG (OIL_FLAGBIT_i386_MMX);
 #endif
 
