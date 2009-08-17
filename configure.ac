@@ -128,6 +128,10 @@ EOF
     
     echo "#define OIL_ARCH $arch" >> $outfile
     echo "#define OIL_PLATFORM $platform" >> $outfile
+    echo "" >> $outfile
+    echo "#define OIL_BIG_ENDIAN 4321" >> $outfile
+    echo "#define OIL_LITTLE_ENDIAN 1234" >> $outfile
+    echo "#define OIL_BYTE_ORDER $byte_order" >> $outfile
     
     cat >>$outfile <<EOF
 #ifdef __cplusplus
@@ -157,6 +161,13 @@ EOF
         arch=mips
         platform=mips_n64
     fi
+    
+    if test x$ac_cv_c_bigendian = xyes; then
+        byte_order=OIL_BIG_ENDIAN
+    else
+        byte_order=OIL_LITTLE_ENDIAN
+    fi
+
 ])
 AC_CONFIG_FILES([oilcore.pc
                 oilcore-uninstalled.pc
