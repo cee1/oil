@@ -1,12 +1,14 @@
 #include <oilfuncs.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 int main ()
 {
+    oilfuncs_load_ini ();
+    oil_class_uninit ();
 
-    oil_class_init (NULL);
-    oilfuncs_register_classes ();
-    oilfuncs_register_implements ();
-    
+    oilfuncs_load_auto ();
+    oil_class_uninit ();
+
     return 0;
 }

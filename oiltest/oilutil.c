@@ -310,7 +310,7 @@ OilTimerClass oil_timer_default = {
     .stop = oil_timer_stop_default,
     .elapsed = oil_timer_elapsed_default,
     .destroy = oil_timer_destroy_default,
-    .precise = 1e-8,
+    .precise = 1e-7,
 };
 #else
 
@@ -320,7 +320,7 @@ OilTimerClass oil_timer_default = {
     .stop = (OilTimerStop) g_timer_stop,
     .elapsed = (OilTimerElapsed) g_timer_elapsed,
     .destroy =  (OilTimerDestroy) g_timer_destroy,
-    .precise = 1e-8,
+    .precise = 1e-7,
 };
 
 #endif /* HAVE_CLOCK_THREAD_CPUTIME_ID || defined HAVE_CLOCK_MONOTONIC */

@@ -127,7 +127,9 @@ extern "C" {
 EOF
     
     echo "#define OIL_ARCH $arch" >> $outfile
+    echo "#define OIL_ARCH_STRING \"$arch\"" >> $outfile
     echo "#define OIL_PLATFORM $platform" >> $outfile
+    echo "#define OIL_PLATFORM_STRING \"$platform\"" >> $outfile
     echo "" >> $outfile
     echo "#define OIL_BIG_ENDIAN 4321" >> $outfile
     echo "#define OIL_LITTLE_ENDIAN 1234" >> $outfile

@@ -327,7 +327,7 @@ static void _optimize_class (
     oil_test_log_printf (
             "Choose: %s",
             fixture.chosen_impl ? fixture.chosen_impl : "reference");
-    oil_class_active_implement (cls, fixture.chosen_impl);
+    oil_class_activate_implement (cls, fixture.chosen_impl);
 }
 
 static void _calc_sample_layout (guint n_params, OilParameter *params)
@@ -550,7 +550,7 @@ static gboolean _check_reference (void *ref, struct _fixture *fixture)
     
     OIL_TRY (
         gint i;
-        for (i = 0; i <= iterations; i++) {
+        for (i = 0; i < iterations; i++) {
             _arm_test_data (n_params, params, (OilGenericType *) src_sample, ref_sample);
             cls_data->call (ref, real_ref_sample, profiler);
         }
@@ -609,7 +609,7 @@ static int _check_implement (
     profiler->begin (profiler, iterations, func);
     OIL_TRY (
         gint i;
-        for (i = 0; i <= iterations; i++) {
+        for (i = 0; i < iterations; i++) {
             _arm_test_data (n_params, params, tdata, (OilGenericType *) src_sample);
             cls_data->call (func, real_tdata, profiler);
         }

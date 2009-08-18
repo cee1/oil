@@ -17,7 +17,7 @@ oil_class_foreach
 oil_class_remove_implement
 oil_class_clear_implements
 oil_class_implements_foreach
-oil_class_active_implement
+oil_class_activate_implement
 oil_class_get_active_implement
 oil_class_add_data
 oil_class_get_name

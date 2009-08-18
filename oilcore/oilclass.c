@@ -408,7 +408,7 @@ int oil_class_clear_implements (OilClass *cls)
 }
 
 /**
- * oil_class_active_implement:
+ * oil_class_activate_implement:
  * @cls: #OilClass
  * @impl_name: the name of the implement, NULL means active the reference implement
  *
@@ -416,7 +416,7 @@ int oil_class_clear_implements (OilClass *cls)
  * If @impl_name is NULL, the reference implement is activated.
  * If no implement with the name @impl_name exists in function class @cls, do nothing
  */
-void oil_class_active_implement (OilClass *cls, char *impl_name)
+void oil_class_activate_implement (OilClass *cls, char *impl_name)
 {
     OilImplement *impl = NULL;
 
@@ -442,8 +442,8 @@ void oil_class_active_implement (OilClass *cls, char *impl_name)
  *
  * Retrieve the active implement of function class @cls
  *
- * Returns: the name of the current active implement, or NULL, 
- * which means the reference implement is activated, or @cls is NULL or corrupt
+ * Returns: an internal string holds the name of the current active implement, 
+ * or NULL, which means the reference implement is activated, or @cls is NULL or corrupt
  */
 char *oil_class_get_active_implement (OilClass *cls)
 {

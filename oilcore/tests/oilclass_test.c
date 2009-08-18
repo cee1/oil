@@ -221,7 +221,7 @@ static void verify_class1 (OilClass *cls)
             char *tmp;
             
             snprintf (impl_name, 4 + ord + 1, "Impl%d", i + 1);
-            oil_class_active_implement (cls, impl_name);
+            oil_class_activate_implement (cls, impl_name);
             
             tmp = oil_class_get_active_implement (cls);
             test_assert (

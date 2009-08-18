@@ -21,6 +21,9 @@ extern void oilfuncs_register_implements ();
 /* for oilfunc-test */
 extern void oilfuncs_attach_classes ();
 
+void oilfuncs_load_ini ();
+void oilfuncs_load_auto ();
+
 #ifdef __cplusplus
 }
 #endif
