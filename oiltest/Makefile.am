@@ -4,6 +4,8 @@ liboiltest_@OIL_MAJOR_VERSION@_@OIL_MINOR_VERSION@_la_SOURCES = \
     oilutil.h                                                   \
     oiltestconfig.c                                             \
     oiltestconfig.h                                             \
+    oiltestlog.c                                                \
+    oiltestlog.h                                                \
     oilparameter.c                                              \
     oilparameter.h                                              \
     oilchecker.c                                                \
@@ -32,6 +34,7 @@ oilinclude_HEADERS =        \
     oilutil.h               \
     oilparameter.h          \
     oiltestconfig.h         \
+    oiltestlog.h            \
     oilchecker.h            \
     oilprofiler.h           \
     oiltester.h

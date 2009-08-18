@@ -15,6 +15,7 @@
  */
 #include "oilparameter.h"
 #include "oilutil.h"
+#include <string.h>
 
 #define MAX_PARAMS (OIL_ARG_LAST - 1)
 

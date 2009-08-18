@@ -96,7 +96,7 @@ void oil_class_init (void *class_data_destructor)
             (DestroyNotify) _destroy_class);
 
     if (!oil_classes) {
-        perror ("oil_class_init: create internal hash table failed");
+        fprintf (stderr, "oil_class_init: create internal hash table failed\n");
         abort ();
     }
     if (class_data_destructor)
@@ -147,7 +147,7 @@ OilClass *oil_class_register (
 
     dup_cls_name = strdup (cls_name);
     if (!dup_cls_name) {
-        perror ("oil_cls_reg_name: duplicate cls_name failed");
+        fprintf (stderr, "oil_cls_reg_name: duplicate cls_name failed\n");
         abort ();
     }
     cls = (OilClass *) malloc (sizeof (OilClass));
@@ -533,9 +533,9 @@ static int _cmp_impl_name (
 {
     char *to_cmp = (char *) user_data;
 
-    if (!user_data) return 0;
+    if (!to_cmp) return 0;
 
-    return strcmp (name, user_data) == 0;
+    return strcmp (name, to_cmp) == 0;
 }
 
 static int _str_equal (const void *a, const void *b)
@@ -598,9 +598,10 @@ static void _class_resize_impl_array (OilClass *cls, int new_len)
         
         cls->impls = realloc (cls->impls, new_len * sizeof (OilImplement));
         if (!cls->impls) {
-            perror ("_class_resize_impl_array: realloc failed");
+            fprintf (stderr, "_class_resize_impl_array: realloc failed\n");
             abort ();
         }
         cls->n_alloc = new_len;
     }
 }
+

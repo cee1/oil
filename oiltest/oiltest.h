@@ -10,6 +10,7 @@
 #include <oilparameter.h>
 #include <oilutil.h>
 #include <oiltestconfig.h>
+#include <oiltestlog.h>
 #include <oilchecker.h>
 #include <oilprofiler.h>
 #include <oiltester.h>

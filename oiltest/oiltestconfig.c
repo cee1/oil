@@ -158,9 +158,6 @@ void oil_test_config_vset (gint n_params, va_list va_args)
     _f = (OilTestConfig *) g_trash_stack_peek (&oil_test_config);
     
     if (n_params) {
-        gint option_id;
-        gchar *key;
-        gpointer val;
         guint i, n = (guint) n_params;
         
         for (i = 0; i < n; i++) {
@@ -270,7 +267,7 @@ void oil_test_config_vset (gint n_params, va_list va_args)
                     }
                     break;
                 default:
-                    g_warning ("set testconfig: not supported var %s", key);
+                    g_warning ("set testconfig: not supported option_id %d", opt);
                     return;
             }
         }
@@ -293,8 +290,6 @@ void oil_test_config_vget (gint n_params, va_list va_args)
     _f = (OilTestConfig *) g_trash_stack_peek (&oil_test_config);
     
     if (n_params) {
-        gint option_id;
-        gchar *key;
         guint i, n = (guint) n_params;
         gint *i_ptr;
         gchar **s_ptr;
@@ -350,7 +345,7 @@ void oil_test_config_vget (gint n_params, va_list va_args)
                     *f_ptr = _f->tolerance_low;
                     break;
                 default:
-                    g_warning ("set test_config: not supported var %s", key);
+                    g_warning ("set test_config: not supported option_id %d", opt);
                     return;
             }
         }

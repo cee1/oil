@@ -34,7 +34,6 @@ static unsigned int _get_order_base10 (unsigned int n)
 
 static void fill_classes ()
 {
-    char cls_prefix[] = "class";
     unsigned int i, ord;
     
     ord = _get_order_base10 (NR_CLASSES) + 1;

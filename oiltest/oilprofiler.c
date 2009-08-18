@@ -8,6 +8,7 @@
 #include "oilprofiler.h"
 #include "oilutil.h"
 #include "oiltestconfig.h"
+#include "oiltestlog.h"
 
 /**
  * SECTION:profiler
@@ -82,8 +83,8 @@ void oil_profiler_begin (
     data->min = G_MAXDOUBLE;
     
     data->hist_n = 0;
-    data->hist_time = g_try_new0 (gdouble, iterations);
-    data->hist_count = g_try_new0 (gint, iterations);
+    data->hist_time = (gdouble *) g_try_new0 (gdouble, iterations);
+    data->hist_count = (guint *) g_try_new0 (gint, iterations);
     
     profiler->data = (gpointer) data;
 }

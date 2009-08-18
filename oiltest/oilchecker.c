@@ -7,6 +7,7 @@
 #include "oilchecker.h"
 #include "oilutil.h"
 #include "oiltestconfig.h"
+#include "oiltestlog.h"
 #include <inttypes.h>
 
 /**

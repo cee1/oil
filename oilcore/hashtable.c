@@ -272,8 +272,6 @@ static void _hash_table_set_shift_from_size (
 
 static void _hash_table_set_shift (HashTable *ht, unsigned int shift)
 {
-    unsigned int mask = 0;
-    
     ht->size = 1 << shift;
     ht->mod = prime_mod[shift];
     ht->mask = (1 << shift) - 1;

@@ -25,7 +25,7 @@ AM_MAINTAINER_MODE
 
 # Checks for programs.
 AC_PROG_CC
-CFLAGS="-O0 -g"
+CFLAGS="-O0 -g -Wall"
 
 AM_PROG_AS
 AC_PROG_INSTALL
