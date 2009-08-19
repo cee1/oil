@@ -9,7 +9,8 @@ liboilfuncs_@OIL_MAJOR_VERSION@_@OIL_MINOR_VERSION@_la_SOURCES =                
     oilfuncs-slots.c                                                                \
     oilfuncs-register-classes.c                                                     \
     oilfuncs-register-implements.c                                                  \
-    ini-loader.c
+    ini-init.c                                                                      \
+    oilfuncs.ini
 
 liboilfuncs_@OIL_MAJOR_VERSION@_@OIL_MINOR_VERSION@_la_LIBADD =                     \
     $(top_builddir)/oilcore/liboilcore-@OIL_MAJOR_VERSION@.@OIL_MINOR_VERSION@.la   \
@@ -21,7 +22,7 @@ liboilfuncs_@OIL_MAJOR_VERSION@_@OIL_MINOR_VERSION@_la_CPPFLAGS = -I$(top_srcdir
 liboilfuncs_test_@OIL_MAJOR_VERSION@_@OIL_MINOR_VERSION@_la_SOURCES =               \
     oilfuncs-attach-classes.c                                                       \
     oilfuncs-marshal.c                                                              \
-    auto-loader.c
+    auto-init.c
 
 liboilfuncs_test_@OIL_MAJOR_VERSION@_@OIL_MINOR_VERSION@_la_LIBADD =                \
     liboilfuncs-@OIL_MAJOR_VERSION@.@OIL_MINOR_VERSION@.la                          \

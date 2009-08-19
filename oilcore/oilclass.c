@@ -89,6 +89,11 @@ static DestroyNotify oil_class_data_destructor = NULL;
  */
 void oil_class_init (void *class_data_destructor)
 {
+    if (oil_classes) {
+        fprintf (stderr, "oil_class_init: oilcore has already been initialized\n");
+        return;
+    }
+    
     oil_classes = hash_table_new (
             _str_hash,
             _str_equal,
@@ -99,8 +104,8 @@ void oil_class_init (void *class_data_destructor)
         fprintf (stderr, "oil_class_init: create internal hash table failed\n");
         abort ();
     }
-    if (class_data_destructor)
-        oil_class_data_destructor = (DestroyNotify) class_data_destructor;
+    
+    oil_class_data_destructor = (DestroyNotify) class_data_destructor;
 }
 
 /**

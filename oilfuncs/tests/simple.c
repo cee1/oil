@@ -4,10 +4,10 @@
 
 int main ()
 {
-    oilfuncs_load_ini ();
+    oilfuncs_init_from_ini ();
     oil_class_uninit ();
 
-    oilfuncs_load_auto ();
+    oilfuncs_init_auto ();
     oil_class_uninit ();
 
     return 0;

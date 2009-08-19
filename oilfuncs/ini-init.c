@@ -10,14 +10,13 @@
 #include <oilcore.h>
 #include "oilfuncs.h"
 
-void parse_ini (const char *ini_string);
 static void parse_line (char *line, char **section);
 
 /**
- * oilfuncs_load_ini:
- * a tiny ini loader for oilfuncs
+ * oilfuncs_init_from_ini:
+ * Initialize oilfuncs, it selects implements according to an internal ini-string.
  */
-void oilfuncs_load_ini ()
+void oilfuncs_init_from_ini ()
 {
     oil_class_init (NULL);
 
@@ -25,10 +24,8 @@ void oilfuncs_load_ini ()
     oilfuncs_register_implements ();
 
 # include "oilfuncs.ini"
-
-    parse_ini (oilfuncs_ini);
+    oil_load_ini (oilfuncs_ini);
 }
-
 
 #define MAX_LINE_LEN 1024
 /* 
@@ -47,27 +44,37 @@ void oilfuncs_load_ini ()
     }                                       \
 } while (0)
 
-void parse_ini (const char *ini_string)
+/**
+ * oil_load_ini:
+ * @ini_string: an ini-string, describing each active implement set for each platform.
+ *
+ * Parses @ini_string, selects implements according to @ini_string, which will like:
+ * [platform]
+ * function_class = implement
+ */
+void oil_load_ini (const char *ini_string)
 {
-    const char *start, *end;
-    char *section = NULL;
-    
-    char line[MAX_LINE_LEN] = {0,};
-    
-    start = (char *) ini_string;
-    end = strchr (start, '\n');
-    
-    while (end) {
-        strncpy (line, start, MAX_LINE_LEN - 1);
-        parse_line (line, &section);
+    if (ini_string) {
+        const char *start, *end;
+        char *section = NULL;
         
-        start = end + 1;
+        char line[MAX_LINE_LEN] = {0,};
+        
+        start = (char *) ini_string;
         end = strchr (start, '\n');
+        
+        while (end) {
+            strncpy (line, start, MAX_LINE_LEN - 1);
+            parse_line (line, &section);
+            
+            start = end + 1;
+            end = strchr (start, '\n');
+        }
+        
+        strncpy (line , start, MAX_LINE_LEN - 1);
+        parse_line (line, &section);
+        free (section);
     }
-    
-    strncpy (line , start, MAX_LINE_LEN - 1);
-    parse_line (line, &section);
-    free (section);
 }
 
 static void parse_line (char *line, char **section)
