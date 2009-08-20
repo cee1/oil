@@ -14,14 +14,15 @@
  *
  * Before using functions in oilfuncs, call one of the following initialize functions:
  *   <itemizedlist>
- *     <listitem><para>oilfuncs_init_auto()</para><listitem>
- *     <listitem><para>oilfuncs_init_from_ini()</para><listitem>
+ *     <listitem><para>oilfuncs_init_auto()</para></listitem>
+ *     <listitem><para>oilfuncs_init_from_ini()</para></listitem>
  *   </itemizedlist>
- * Call oilclass_uninit() to un-initialize the whole oil libraries.
+ * Call oil_class_uninit() to un-initialize the whole oil libraries.
  */
 
 /**
  * oilfuncs_init_auto:
+ * 
  * Initialize oilfuncs, it selects implements by doing runtime test
  */
 void oilfuncs_init_auto ()

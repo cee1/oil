@@ -34,11 +34,13 @@
   <chapter id="use_oiltest">
     <title>Use oiltest</title>
     <para>
-    Typical usage oiltest does not involve many functions. Assume you start a project foo, which provides a series of public functions and their implements on some platforms. You need:
+    Typical usage of oiltest does not involve many functions. Assume you start a project foo, which provides a series of public functions and their implements on some platforms. You need:
     </para>
     <itemizedlist>
     <listitem><para>
-    Write a file contains all declarations of the public functions.</para>
+    Write a file contains all declarations of the public functions.
+    (see the following example)
+    </para>
     <example><title>foo.def</title><programlisting>
 /* name of function class is "rgb2rgba", the reference function should be rgb2rgba_ref */
 void rgb2rgba (uint8_t *d_4xn, uint8_t* s_3xn, int n);
@@ -47,40 +49,89 @@ void squaresum_f64 (double *d, double *s, int n);
 void copy8x8_u8 (uint8_t *d_8x8, int ds, uint8_t *s_8x8, int ss);</programlisting>
     </example></listitem>
     <listitem><para>
-    Make a new directory "ref", and write the reference implements there.
-    The name of reference function should be &lt;function_class&gt;<emphasis>_ref</emphasis>.
+    Make a new directory "ref", and write the reference functions there.
+    Name of a reference function should follow the schema
+    &lt;function_class&gt;<emphasis>_ref</emphasis>.
     </para></listitem>
     <listitem><para>
-    Classify other implements in a pre-platform way and for each platform, 
-    write a file to register implements.</para>
+    Classify other implements in a per-platform way and for each platform, 
+    write a file to register implements (see the following example).</para>
     <example><title>i386.reg and mmx.reg</title>
     <para>
-    Assuming you'v written an implement using MMX, it is preferred to place this implement in the directory "i386/mmx". 
+    Assuming you've written an implement using MMX, it is preferred to place this implement in directory "i386/mmx". 
     Now write the implements register files in i386 and mmx directories.</para>
     <programlisting># file: i386.ref
 [include]
 mmx/mmx.reg</programlisting>
     <programlisting># file: mmx.ref
 [OIL_FLAG (OIL_FLAGBIT_i386_MMX)]
-oil_copy8x8_u8.mmx = oil_copy8x8_u8_mmx</programlisting>
+oil_copy8x8_u8.mmx = oil_copy8x8_u8_mmx
+
+# [required_feature_flag]
+# cls_name.impl_name = impl_function</programlisting>
     </example></listitem>
     <listitem><para>
     Use oil-regclasses and oil-regimpls to process the classes and implements register files.
     </para>
     <example><title>Using oil-regclasses and oil-regimpls</title>
     <programlisting>
-# Will generate foo.c foo.h foo_register_classes.c foo_marshal.c foo_marshal.h
+# Will generate foo-slots.c     foo-slots.h             foo-register-classes.c
+#               foo-marshal.c   foo-attach-classes.c
 oil-regclasses foo.def
 
-# Use autotool to detect the current platform
+# Use autotool to detect the current platform,
 # and generate a foo.reg file including the current platform in the top-level directory
-# Will generate register_implements.c
+# Will generate foo-register-implements.c
 oil-regimpls foo.reg</programlisting>
     </example></listitem>
     <listitem><para>
-    Use and modify the generated files.
+    Use and modify the generated files, write a test launcher. 
+    </para><example><title>Code of the test launcher</title>
+    <programlisting>
+/* launch-test-foo.c */
+#include &lt;oiltest.h&gt;
+
+/* import classes register function from foo-register-classes.c */
+extern void foo_register_classes ();
+
+/* attach testing data to function classes */
+extern void foo_attach_classes ();
+
+/* import implement function from foo-register-implements.c */
+extern void foo_register_implements ();
+
+int main ()
+{
+    /* initialize oilcore */
+    oil_class_init (oil_test_destroy_class_data);
+    
+    foo_register_classes ();
+    foo_attach_classes ();
+    foo_register_implements ();
+    
+    /* configure testing context */
+    oil_test_config_set (
+            -1,
+            OIL_CONF_OPT_SILENT, FALSE, /* output testing log */
+            OIL_CONF_OPT_LOG_FD, 0,     /* output to stdout */
+            NULL);
+
+    /* run the test */
+    oil_test_optimize_class_all ();
+}</programlisting>
+    </example>
+    </listitem>
+    <listitem><para>
+    Compile the test launcher, perform to test:
+    </para>
+    <programlisting>
+cc `pkg-config --cflags --libs oiltest-0.1` launch-test-foo.c - launch-test-foo</programlisting>
+    </listitem>
+    <listitem><para>
+    Process the testing log, get a list of best implements for a specified platform and CPU.
+    Combine <link linkend="oil-class-activate-implement">oil_class_activate_implement()</link> with the list to write your self-optimizing initializer.
     </para></listitem>
-    </itemizedlist>   
+    </itemizedlist>
     &oil_Tester;
     &oil_Test_Config;
   </chapter>

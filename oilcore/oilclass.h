@@ -21,12 +21,12 @@ typedef struct _OilClass OilClass;
  * OilImplementVisitor:
  * @impl_name: name of the implement
  * @func: the actual function of the implement
- * @flags: flags of the implement, see #OilCPUFlags
- * @user_data: see oil_class_implements_foreach()
+ * @flags: flags of the implement, see #OilCPUFlagBits
+ * @user_data: user provides data
  *
- * see oil_class_implements_foreach(), for each implement call it
+ * see oil_class_implements_foreach()
  *
- * Returns: 0 for continue visiting next implement, 1 for no further visiting
+ * Returns: 0 for continuing visiting next implement, 1 for no further visit
  */
 typedef int (*OilImplementVisitor) (
         const char *impl_name,
@@ -38,9 +38,9 @@ typedef int (*OilImplementVisitor) (
  * OilClassVisitor:
  * @cls_name: name of the function class
  * @cls: an #OilClass
- * @user_data: see oil_class_foreach()
+ * @user_data: user provides data
  *
- * see oil_class_foreach(), for each class call it
+ * see oil_class_foreach()
  */
 typedef void (*OilClassVisitor) (
         const char *cls_name,
@@ -53,7 +53,7 @@ void oil_class_uninit ();
 OilClass *oil_class_register (
         char *cls_name,
         void *ref_func,
-        void **export_func);
+        void **slot);
 OilClass *oil_class_get (char *cls_name);
 int oil_class_remove (char *cls_name);
 void oil_class_remove_all ();

@@ -17,6 +17,7 @@
  * The profiler will be internally used like this:
  * |[
  * /&ast; The profiler is registered when calling oil_test_attach_class_full() &ast;/
+ * 
  * profiler->begin (profiler, iterations, test_function);
  *
  * for (i = 0; i < iterations; i++) {
@@ -161,7 +162,7 @@ void oil_profiler_start (OilProfiler *profiler)
  * oil_profiler_stop:
  * @profiler: the profiler
  *
- * Deactivate the profiler, do profiling
+ * Deactivate the profiler, stop profiling
  */
 void oil_profiler_stop (OilProfiler *profiler)
 {

@@ -16,6 +16,7 @@ static void do_activate_impl (const char *section, char *key, char *value);
 
 /**
  * oilfuncs_init_from_ini:
+ *
  * Initialize oilfuncs, it selects implements according to an internal ini-string.
  */
 void oilfuncs_init_from_ini ()
@@ -63,11 +64,12 @@ void oilfuncs_init_from_ini ()
 
 /**
  * oil_load_ini:
- * @ini_string: an ini-string, describing each active implement set for each platform.
+ * @ini_string: an ini-string, describing each active implement set for a specified CPU. 
  *
- * Parses @ini_string, selects implements according to @ini_string, which will like:
- * [platform]
- * function_class = implement
+ * Parse @ini_string, select & activate implements according to @ini_string, which will like:
+ * <informalexample><programlisting>
+ * [white-separated flags]
+ * function_class = implement</programlisting></informalexample>
  */
 void oil_load_ini (const char *ini_string)
 {

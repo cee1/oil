@@ -1,0 +1,35 @@
+<MACRO>
+<NAME>OIL_ARCH</NAME>
+#define OIL_ARCH current_arch
+</MACRO>
+
+<MACRO>
+<NAME>OIL_ARCH_STRING</NAME>
+#define OIL_ARCH_STRING "current_arch"
+</MACRO>
+
+<MACRO>
+<NAME>OIL_PLATFORM</NAME>
+#define OIL_PLATFORM current_platform
+</MACRO>
+
+<MACRO>
+<NAME>OIL_PLATFORM_STRING</NAME>
+#define OIL_PLATFORM_STRING "current_platform"
+</MACRO>
+
+<MACRO>
+<NAME>OIL_BIG_ENDIAN</NAME>
+#define OIL_BIG_ENDIAN 4321
+</MACRO>
+
+<MACRO>
+<NAME>OIL_LITTLE_ENDIAN</NAME>
+#define OIL_LITTLE_ENDIAN 1234
+</MACRO>
+
+<MACRO>
+<NAME>OIL_BYTE_ORDER</NAME>
+#define OIL_BYTE_ORDER current_native_endian
+</MACRO>
+

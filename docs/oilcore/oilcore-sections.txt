@@ -17,6 +17,7 @@ oil_class_foreach
 oil_class_remove_implement
 oil_class_clear_implements
 oil_class_implements_foreach
+oil_class_implements_get
 oil_class_activate_implement
 oil_class_get_active_implement
 oil_class_add_data
@@ -26,10 +27,20 @@ oil_class_get_reference
 </SECTION>
 
 <SECTION>
-<TITLE>CPU detection</TITLE>
+<TITLE>Platform detection</TITLE>
 <FILE>cpu_detection</FILE>
 OilCPUFlagBits
 OIL_FLAG
 oil_cpu_get_flags
+oil_cpu_flag_to_string
+oil_cpu_string_to_flag
+<SUBSECTION>
+OIL_ARCH
+OIL_ARCH_STRING
+OIL_PLATFORM
+OIL_PLATFORM_STRING
+OIL_BYTE_ORDER
+OIL_BIG_ENDIAN
+OIL_LITTLE_ENDIAN
 </SECTION>
 

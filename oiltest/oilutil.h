@@ -32,9 +32,9 @@ G_STMT_START {                                                          \
  */
 #define oil_error_gerror(gerror)                                        \
 G_STMT_START {                                                          \
-    const gchar *domain = g_quark_to_string ((gerror)->domain);         \
+    const gchar *_____domain = g_quark_to_string ((gerror)->domain);    \
     g_error ("%s: Error code: %d, %s",                                  \
-                        domain ? domain : "",                           \
+                        _____domain ? _____domain : "",                 \
                         (gerror)->code,                                 \
                         (gerror)->message);                             \
     /* should abort */                                                  \
@@ -47,9 +47,9 @@ G_STMT_START {                                                          \
  * Prints @gerror by g_warning()
  */
 #define oil_warning_gerror(gerror) G_STMT_START {                       \
-    const gchar *domain = g_quark_to_string ((gerror)->domain);         \
+    const gchar *_____domain = g_quark_to_string ((gerror)->domain);    \
     g_warning ("%s: Error code: %d, %s",                                \
-                        domain ? domain : "",                           \
+                        _____domain ? _____domain : "",                 \
                         (gerror)->code,                                 \
                         (gerror)->message);                             \
 } G_STMT_END
@@ -62,10 +62,10 @@ G_STMT_START {                                                          \
  */
 #define oil_timestamp(timestamp)                                        \
 G_STMT_START {                                                          \
-        GTimeVal _tv;                                                   \
-        g_get_current_time (&_tv);                                      \
-        *timestamp = (_tv.tv_sec * (1.0 * G_USEC_PER_SEC) +             \
-                      _tv.tv_usec) / G_USEC_PER_SEC;                    \
+        GTimeVal _____tv;                                               \
+        g_get_current_time (&_____tv);                                  \
+        *(timestamp) = (_____tv.tv_sec * (1.0 * G_USEC_PER_SEC) +       \
+                      _____tv.tv_usec) / G_USEC_PER_SEC;                \
 } G_STMT_END
 
 /**
@@ -76,11 +76,11 @@ G_STMT_START {                                                          \
  * Outputs time-stamped message by @g_logfunc. The message is formatted like printf.
  * 
  */
-#define oil_log_detail(g_logfunc, format, args...)                         \
+#define oil_log_detail(g_logfunc, format, args...)                      \
 G_STMT_START {                                                          \
-        gdouble _timestamp;                                             \
-        oil_timestamp (&_timestamp);                                    \
-        g_logfunc ("[%f] %s(): " format "\n", _timestamp,                  \
+        gdouble _____timestamp;                                         \
+        oil_timestamp (&_____timestamp);                                \
+        g_logfunc ("[%f] %s(): " format "\n", _____timestamp,           \
                  G_STRFUNC, ##args);                                    \
 } G_STMT_END
 
@@ -106,7 +106,7 @@ typedef gpointer (*OilTimerNew) ();
  * OilTimerStart:
  * @timer: a timer
  * 
- * Starts the timer.
+ * Start the timer.
  */
 typedef void (*OilTimerStart) (gpointer timer);
 
@@ -114,16 +114,16 @@ typedef void (*OilTimerStart) (gpointer timer);
  * OilTimerStop:
  * @timer: a timer
  *
- * Stops the timer.
+ * Stop the timer.
  */
 typedef void (*OilTimerStop) (gpointer timer);
 
 /**
  * OilTimerElapsed:
  * @timer: a timer
- * @ret2: reversed for customize this function, return more information.
+ * @ret2: reserved for customize this function, return more information.
  * 
- * Get the elapsed time, between last start and stop
+ * Get the elapsed time, between the last start and stop
  *
  * Returns: a #gdouble, in seconds
  */
@@ -147,6 +147,21 @@ struct _OilTimerClass {
     gdouble precise;
 }; 
 
+/**
+ * OilRandizeArray:
+ * @r: a #GRand, representing a random seed
+ * @array: the array that will be filled with random data
+ * @type: the #OilType of the element of @array
+ * @pre_n: how many elements in a stride?
+ * @stride: the stride
+ * @post_n: length of the array equals to @stride * @post_n
+ *
+ * Fill @array with random data.
+ *
+ * It fills @pre_n elements(of the @type) 
+ * at starting, then jumps to @stride + starting as the new starting, 
+ * fills the next @pre_n elements ...
+ */
 typedef void (*OilRandizeArray) (
         GRand *r,
         guint8 *array, 

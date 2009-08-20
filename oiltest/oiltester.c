@@ -102,9 +102,9 @@ static gboolean _check_guard (guint8 *p, gint size, gint8 guard);
 
 /**
  * SECTION:tester
- * @short_description: functions that perform the actual test.
+ * @short_description: functions involved in performing the actual test.
  * 
- * First you need attach some testing information to function class, then run
+ * First you need to attach some testing information to function classes, then run
  * oil_test_optimize_class_all() or oil_test_optimize_class(), e.g.
  * |[
  * /&ast; initialize the oilcore environment &ast;/
@@ -113,7 +113,7 @@ static gboolean _check_guard (guint8 *p, gint size, gint8 guard);
  * /&ast; register some function classes & add some implements to each class &ast;/
  * ...
  * 
- * /&ast; attach testing context to each class &ast;/
+ * /&ast; attach testing information to each class &ast;/
  * oil_test_attach_class_full (
  *     "oil_copy8x8_u8", /&ast; name of the function class &ast;/
  *     "uint8_t * d_8x8, int ds, uint8_t * s_8x8, int ss", /&ast; prototype string &ast;/
@@ -124,21 +124,23 @@ static gboolean _check_guard (guint8 *p, gint size, gint8 guard);
  * /&ast; perform the test, optimizing all classes &ast;/
  * oil_test_optimize_class_all ();
  *
- * /&ast; un-initialize the oilcore environment, if not need it anymore &ast;/
- * oil_class_uninit (oil_test_destroy_class_data);
+ * /&ast; un-initialize the oilcore environment, if don't need it anymore &ast;/
+ * oil_class_uninit ();
  * ]|
  */
+
 /**
  * oil_test_attach_class_full:
- * @cls_name: the name of the function class
+ * @cls_name: name of the function class
  * @prototype: the prototype string
  * @call: the marshal function
- * @checker: the checker, whether you provide one or oil_checker_default
- * @profiler: the profiler, whether you provide one or oil_profiler_default
+ * @checker: the checker, either you provide one or #oil_checker_default
+ * @profiler: the profiler, either you provide one or #oil_profiler_default
  *
- * Attach testing context to @cls_name, see the description for detail.
- * This function is typically not directly used by user, 
- * the script #oil-regimpls will generate code of attaching.
+ * Attach testing information to function class named @cls_name, see the description for detail.
+ * 
+ * This function is not typically directly used by users, 
+ * the script #oil-regimpls will generate the attaching code.
  */
 void oil_test_attach_class_full (
         gchar *cls_name, 
@@ -187,8 +189,9 @@ void oil_test_attach_class_full (
 /**
  * oil_test_destroy_class_data:
  * 
- * The only usage of this function is passed itself to oil_class_init.
- * Then it will release the testing context when un-initialize the oilcore environment.
+ * The only usage of this function is passing itself to oil_class_init.
+ * Then it will destroy the testing context when un-initialize the oilcore environment.
+ * (i.e. when calls oil_class_uninit())
  */
 void oil_test_destroy_class_data (void *data)
 {
@@ -211,7 +214,7 @@ void oil_test_destroy_class_data (void *data)
  * oil_test_optimize_class:
  * @cls_name: the name of the function class
  * 
- * Performs the test on @cls_name, select & activate the best implement for @cls_name.
+ * Perform the test on @cls_name, select & activate the best implement for @cls_name.
  */
 void oil_test_optimize_class (char *cls_name)
 {

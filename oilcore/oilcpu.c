@@ -9,9 +9,9 @@
 
 /*
  * SECTION:cpu_detection
- * @short_description: provide CPU info to oiltest
+ * @short_description: inspect platform information
  * 
- * Provide the information about what features the current CPU has?
+ * Provide information of current platform, like what features the current CPU has?
  */
 
 const static char *oil_flags_descriptions[OIL_FLAGBIT_NR] = {
@@ -25,7 +25,7 @@ const static char *oil_flags_descriptions[OIL_FLAGBIT_NR] = {
 /**
  * oil_cpu_get_flags:
  *
- * query features of the current CPU
+ * Query features of the current CPU.
  *
  * Returns: the flags corresponding the current CPU
  */

@@ -9,8 +9,8 @@
 
 /**
  * SECTION:parse_prototype_string
- * @short_description: parses prototype specification string, 
- * generates an array of #OilParameter 
+ * @short_description: parse prototype specification string, 
+ * generate an array of #OilParameter 
  * @stability: Private
  */
 #include "oilparameter.h"
@@ -75,11 +75,12 @@ gint oil_type_sizeof (OilType type)
 
 /**
  * oil_prototype_parse:
- * @prototype: a string describe the constrain of the prototype
+ * @prototype: a comma-separated parameters
  * @n_params: out argument, length of the @params
  * @params: out argument, an array of #OilParameter
  *
- * Parses a comma separate parameters, convert them to #OilParameter array representation.
+ * Parse a comma-separated parameters, 
+ * convert them to an array of #OilParameter.
  *
  * Returns: TRUE on success, FALSE on fail
  */

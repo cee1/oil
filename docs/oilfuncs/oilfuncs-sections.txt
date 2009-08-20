@@ -1,0 +1,18 @@
+<INCLUDE>oilfuncs.h</INCLUDE>
+<SECTION>
+<TITLE>Initialization</TITLE>
+<FILE>oilfuncs_init</FILE>
+oilfuncs_init_from_ini
+oilfuncs_init_auto
+<SUBSECTION>
+oil_load_ini
+oilfuncs_register_classes
+oilfuncs_register_implements
+oilfuncs_attach_classes
+</SECTION>
+
+<SECTION>
+<TITLE>Copy functions</TITLE>
+<FILE>oilfuncs_copy</FILE>
+oil_copy8x8_u8
+</SECTION>

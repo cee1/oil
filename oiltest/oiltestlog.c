@@ -15,17 +15,19 @@
 
 /**
  * SECTION:test_log
- * @short_description: logging function that used in the test
+ * @short_description: logging function used in test
  * 
- * These logging functions output log in "header:body\n" text formation.
- * To enable logging, you need set silent_mode FALSE and indicate a logfd by oil_test_config_set()
+ * These logging functions output messages in "header:body\n" text format.
+ * 
+ * To enable logging, you need to set silent_mode to "FALSE" and indicate a logfd
+ * through oil_test_config_set()
  */
 
 /**
  * oil_test_log:
  * @msg: the log message
  *
- * Appends a "\n" to @msg, and outputs it.
+ * Append a "\n" to @msg, and output it.
  */
 void oil_test_log (gchar *msg)
 {
@@ -76,7 +78,7 @@ void oil_test_log_printf (gchar *format, ...)
  * @ptr: point the binary data
  * @n: length of the binary data
  * 
- * Outputs the binary data in hex.
+ * Output the binary data in hex.
  */
 void oil_test_log_binary (guint8 *ptr, guint n)
 {
@@ -100,7 +102,7 @@ void oil_test_log_binary (guint8 *ptr, guint n)
  * oil_test_log_parameter:
  * @param: an #OilParameter
  * 
- * Outputs an #OilParameter.
+ * Output an #OilParameter.
  */
 void oil_test_log_parameter (OilParameter *param)
 {
@@ -187,3 +189,4 @@ void oil_test_log_parameter (OilParameter *param)
     oil_test_log (gstr->str);
     g_string_free (gstr, TRUE);
 }
+

@@ -15,7 +15,7 @@
 
 /**
  * SECTION:randomize_functions
- * @short_description: randomize functions
+ * @short_description: generates random data for testing
  * 
  * Randomize functions, used to generate samples for testing.
  */
@@ -148,18 +148,8 @@ gdouble oil_rand_f64 (GRand *r)
 
 /**
  * oil_randize_array_default:
- * @r: a #GRand, representing a random seed
- * @array: the array that will be filled with random data
- * @type: the #OilType of the @array's element
- * @pre_n: how many elements in a stride?
- * @stride: the stride
- * @post_n: length of the array equals to @stride * @post_n
  *
- * Fills @array with random data. It fills @pre_n elements(of the @type) 
- * at the starting, then jump to @stride + starting as the new starting, 
- * fills next @pre_n elements ...
- * This is the default randomize-array function, you can replace it with your
- * randomize-array function by changing #oil_randize_array
+ * The default randomize-array function.
  */
 void oil_randize_array_default (
         GRand *r,
@@ -228,23 +218,25 @@ G_STMT_START {                                          \
  * SECTION:timer
  * @short_description: the timer
  * 
- * The timer used by the default #OilPorfiler. Following the interface of timer,
- * you can also write your own timer. The timer will be internally used like this:
+ * The timer used by #oil_profiler_default. 
+ * You can write your own timer, and overload #oil_timer
+ * 
+ * The timer will be internally used like this:
  * |[
  * /&ast; creates a timer &ast;/
- * gpointer timer = oil_timer_class.new ();
+ * gpointer timer = oil_timer->new ();
  * 
  * /&ast; starts the timer &ast;/
- * oil_timer_class.start (timer);
+ * oil_timer->start (timer);
  * 
  * /&ast; stops the timer &ast;/
- * oil_timer_class.stop (timer);
+ * oil_timer->stop (timer);
  *
- * /&ast; get the eclapsed timer &ast;/
- * oil_timer_class.eclapsed (timer);
+ * /&ast; gets the eclapsed timer &ast;/
+ * oil_timer->eclapsed (timer);
  * 
- * /&ast; destroy the timer &ast;/
- * oil_timer_class.destroy (timer);
+ * /&ast; destroys the timer &ast;/
+ * oil_timer->destroy (timer);
  * ]|
  */
 
@@ -329,7 +321,6 @@ OilTimerClass oil_timer_default = {
  * oil_timer:
  * 
  * The timer used by #oil_profiler_default.
- * You can change to your own timer, the default is #oil_timer_default
  */
 OilTimerClass *oil_timer = &oil_timer_default;
 
@@ -343,7 +334,7 @@ OilTimerClass *oil_timer = &oil_timer_default;
  *
  * Get the string description of the @flags
  * 
- * Returns: a string description of the @flags
+ * Returns: a newly created string description of the @flags
  */
 gchar *oil_flags_to_string (guint flags)
 {
@@ -365,3 +356,4 @@ gchar *oil_flags_to_string (guint flags)
 
     return ret;
 }
+

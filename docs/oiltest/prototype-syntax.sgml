@@ -11,14 +11,18 @@
 
     <refsect1 id="prototype_string_syntax">
       <para>
-        The prototype string is used to describe the each parameter of the functions in function classes. These functions manipulate data streams. oiltest describes a data stream like  this:</para>
+        The prototype string describes each parameter of the function in a function class. The function usually manipulates some data streams.
+      </para>
       <figure id="data_stream">
       <title>The data stream oiltest sees</title>
       <graphic fileref="array.png" format="PNG"></graphic>
       </figure>
     <refsect2 id="detailed_syntax">
       <para>
-      Here, we use a regular express like syntax to describe the syntax of prototype string
+        A prototype string comprises a comma-separated parameter sub-strings. A parameter comprises type and argument sub-string.
+      </para>
+      <para>
+        The following pseudocode describes syntax of prototype string:
       </para>
       <programlisting>
 white_pad       =       " (\s)*                                                   "
@@ -81,3 +85,4 @@ Argument = word2
    </refsect2>
    </refsect1>
 </refentry>
+

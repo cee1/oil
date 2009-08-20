@@ -22,7 +22,8 @@ typedef struct _OilParameter OilParameter;
  * @OIL_ARG_T_DEST: related to destination operation
  * @OIL_ARG_T_INPLACE: related to inplace operation
  *
- * Currently, oil classifies arguments to four categories: source, destination, inplace, scale
+ * Currently, oil classifies arguments to four categories: source, destination, inplace
+ * and scale
  */
 typedef enum {
     OIL_ARG_T_SCALE = 0,
@@ -59,25 +60,25 @@ typedef enum {
 /**
  * OilGenericType:
  *
- * Used as a generic type, that can represent all C primary types.
+ * Generic type, represents all C primary types.
  * <note>
  * <para>
- * Currently oil access #OilGenericType as a pointer, it may change in future, 
+ * Currently oil only accesses #OilGenericType as a pointer, it may change in the future, 
  * since we have defined OIL_TYPE_s64 OIL_TYPE_u64 and OIL_TYPE_f64.
  * </para>
  * </note>
  * <variablelist role="struct">
  * <varlistentry>
  * <term><link linkend="gpointer">gpointer</link>&nbsp;<structfield>p</structfield>;</term>
- * <listitem><simpara>access as pointer (or 8-32bit integers, in most platforms)</simpara></listitem>
+ * <listitem><simpara>accesses as an pointer (or 8-32bit integers, in most platforms)</simpara></listitem>
  * </varlistentry>
  * <varlistentry>
  * <term><link linkend="guint64">guint64</link>&nbsp;<structfield>i64</structfield>;</term>
- * <listitem><simpara>access as 64bit integer</simpara></listitem>
+ * <listitem><simpara>accesses as a 64-bit integer</simpara></listitem>
  * </varlistentry>
  * <varlistentry>
  * <term><link linkend="gdouble">gdouble</link>&nbsp;<structfield>f64</structfield>;</term>
- * <listitem><simpara>access as 32bit float or 64bit double</simpara></listitem>
+ * <listitem><simpara>accesses as a 32-bit float or a 64-bit double</simpara></listitem>
  * </varlistentry>
  * </variablelist>
  */
@@ -119,7 +120,7 @@ typedef enum {
  * OilParameter:
  * @parameter: the string representation of the parameter
  * @c_type: the #OilType corresponding to C type
- * @arg_class: which class dose the argument belong to: source, destination inplace or scale?
+ * @arg_class: which class dose the argument belong to? see #OilArgClassType
  * @is_pointer: is the argument a pointer?
  * @is_stride: is the argument a stride?
  * @index: 

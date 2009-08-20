@@ -16,15 +16,19 @@
   </bookinfo>
 
   <chapter id="oilcore">
-    <title>OIL Core functions</title>
+    <title>oilcore APIs</title>
     <para>
-      The OIL Core functions provide a mechanism of registering new function class and adding new implement to an existing function class.
+      The oilcore module mainly provides the concepts of function class and implement.
     </para>
     <para>
-      A function class typically has two or more implements. These implements have the same prototype and function, and only one of them is activated, which means a public function pointer corresponding to the function class point that implement.
+      A function class typically has two or more implements. These implements have the same prototype and function, and only one of them is activated, which means a public function pointer corresponding to the function class(a slot) point that implement.
     </para>
+    <figure id="oilclass_airview">
+      <title>The relationship among function class, implement and slot</title>
+      <graphic fileref="oilclasses.png" format="PNG"></graphic>
+    </figure>
     <para>
-    You can using oilcore to manager a list of function classes and implements, and select the best implement for each class, according to what features the CURRENT CPU has and some pre-done tests. The tests can be performed with another module of oil -- oiltest.
+    You can use oilcore to manager a list of function classes and implements, and plug the best implement for each class into the corresponding slot, according to what features the CURRENT CPU has and some pre-done tests. The tests can be performed with another module of oil -- oiltest.
     </para>
     
     &oil_Class;

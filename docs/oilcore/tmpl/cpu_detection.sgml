@@ -1,0 +1,112 @@
+<!-- ##### SECTION Title ##### -->
+Platform detection
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### ENUM OilCPUFlagBits ##### -->
+<para>
+
+</para>
+
+@OIL_FLAGBIT_GS2F: 
+@OIL_FLAGBIT_i386_MMX: 
+@OIL_FLAGBIT_NR: 
+
+<!-- ##### MACRO OIL_FLAG ##### -->
+<para>
+
+</para>
+
+@bit: 
+
+
+<!-- ##### FUNCTION oil_cpu_get_flags ##### -->
+<para>
+
+</para>
+
+@Returns: 
+
+
+<!-- ##### FUNCTION oil_cpu_flag_to_string ##### -->
+<para>
+
+</para>
+
+@flag: 
+@Returns: 
+
+
+<!-- ##### FUNCTION oil_cpu_string_to_flag ##### -->
+<para>
+
+</para>
+
+@flag_string: 
+@Returns: 
+
+
+<!-- ##### MACRO OIL_ARCH ##### -->
+<para>
+Indicate the current architecture.
+</para>
+
+
+
+<!-- ##### MACRO OIL_ARCH_STRING ##### -->
+<para>
+String version of #OIL_ARCH
+</para>
+
+
+
+<!-- ##### MACRO OIL_PLATFORM ##### -->
+<para>
+Indicate the current platform.
+It may have different ABIs in the same architecture. So OIL_PLATFORM indicates the specific architecture and ABI of the current platform.
+</para>
+
+
+
+<!-- ##### MACRO OIL_PLATFORM_STRING ##### -->
+<para>
+String version of #OIL_PLATFORM
+</para>
+
+
+
+<!-- ##### MACRO OIL_BYTE_ORDER ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO OIL_BIG_ENDIAN ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO OIL_LITTLE_ENDIAN ##### -->
+<para>
+
+</para>
+
+
+

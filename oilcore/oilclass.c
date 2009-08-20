@@ -8,21 +8,21 @@
 
 /**
  * SECTION:function_class
- * @short_description: manipulates function classes of their implements
+ * @short_description: functions manipulate "function class" and its implements
  *
- * Function Class:
+ * Function class:
  * <itemizedlist>
  *   <listitem>
- *     <para>Represents functions that have the same prototype & function</para>
+ *     <para>Represents a group of functions that have the same prototype & function</para>
  *   </listitem>
  *   <listitem>
  *     <para>Must have a reference implement</para>
  *   </listitem>
  *   <listitem>
- *     <para>Can add zero or more implement</para>
+ *     <para>Contains one or more implements</para>
  *   </listitem>
  *   <listitem>
- *     <para>Has only one active implement, which can be used by the exported function pointer</para>
+ *     <para>Has only one active implement, which is exported by slot</para>
  *   </listitem>
  *   <listitem>
  *     <para>Can have an attachment, which will be used by oiltest</para>
@@ -49,7 +49,7 @@ struct _OilImplement {
 
 struct _OilClass {
     char *name;
-    void **pChosen;
+    void **slot_p;
     void *ref;
 
     int n_occupied;
@@ -111,7 +111,7 @@ void oil_class_init (void *class_data_destructor)
 /**
  * oil_class_uninit:
  *
- * Low-level function, free dynamtic alloced memory
+ * Low-level function, un-initialize oilcore (free dynamicly alloced memory)
  */
 void oil_class_uninit ()
 {
@@ -124,13 +124,13 @@ void oil_class_uninit ()
 /**
  * oil_class_register:
  * @cls_name: shouldn't be NULL or empty string
- * @ref_func: a pointer, which point to the the reference implement, shouldn't be NULL
- * @export_func: address of a pointer that point to the active implement of a function class
+ * @ref_func: function of the reference implement, shouldn't be NULL
+ * @slot: address of a slot
  * 
  * Register a function class named @cls_name, with a reference implement @ref_func, and 
- * export the active function through @export_func. Its typical usage:
+ * export the active implement through @slot. Its typical usage:
  * |[
- *   /&ast; declare a global function pointer variable &ast;/
+ *   /&ast; declare a global function pointer variable(a slot) &ast;/
  *   void (*foo) (...);
  *
  *   oil_class_register ("class_foo", foo_ref, &foo);
@@ -142,12 +142,12 @@ void oil_class_uninit ()
 OilClass *oil_class_register (
         char *cls_name,
         void *ref_func,
-        void **export_func)
+        void **slot)
 {
     OilClass *cls = NULL;
     char *dup_cls_name = NULL;
 
-    if (!ref_func || !export_func || !cls_name || *cls_name == '\0')
+    if (!ref_func || !slot || !cls_name || *cls_name == '\0')
         return NULL;
 
     dup_cls_name = strdup (cls_name);
@@ -157,9 +157,9 @@ OilClass *oil_class_register (
     }
     cls = (OilClass *) malloc (sizeof (OilClass));
 
-    *export_func = cls->ref = ref_func;
+    *slot = cls->ref = ref_func;
     cls->name = dup_cls_name;
-    cls->pChosen = export_func;
+    cls->slot_p = slot;
 
     cls->n_alloc = 0;
     cls->n_impls = 0;
@@ -176,9 +176,9 @@ OilClass *oil_class_register (
 
 /**
  * oil_class_get:
- * @cls_name: an #OilClass
+ * @cls_name: name of a function class
  *
- * Get C structure representation of a function class from its name
+ * Get C structure representation of a function class from @cls_name
  *
  * Returns: #OilClass or NULL
  */
@@ -214,7 +214,7 @@ char *oil_class_get_name (OilClass *cls)
  * @cls: an #OilClass
  * @cls_data: the data attached to @cls
  *
- * Attach data @cls_data to a function class @cls. If the @cls already has attachment,
+ * Attach data @cls_data to a function class @cls. If the @cls already has an attachment,
  * the attachment will be freed by class_data_destructor (registered in oil_class_init())
  * and replaced by @cls_data.
  */
@@ -234,7 +234,7 @@ void oil_class_add_data (OilClass *cls, void *cls_data)
  * oil_class_get_data:
  * @cls: an #OilClass
  * 
- * Get the attachment of the @cls.
+ * Get the attachment of the function class @cls.
  *
  * Returns: the attachment of the @cls,
  *          or NULL if @cls has no attachment or is NULL or corrupt
@@ -251,9 +251,9 @@ void *oil_class_get_data (OilClass *cls)
  * oil_class_get_reference:
  * @cls: an #OilClass
  *
- * Get the reference implement of function class @cls
+ * Get function of the reference implement of function class @cls
  *
- * Returns: a pointer point to the reference implement, or NULL, if @cls is NULL or corrupt
+ * Returns: function of the reference implement, or NULL, if @cls is NULL or corrupt
  */
 void *oil_class_get_reference (OilClass *cls)
 {
@@ -270,7 +270,7 @@ void *oil_class_get_reference (OilClass *cls)
  * @func: the actual function of implement, should not be NULL
  * @flags: flags tells what features CPU must have to run the implement, see #OilCPUFlagBits
  *
- * Add an implement to function class @cls, with the name @impl_name. 
+ * Add an implement named @impl_name to function class @cls.
  * If an implement of the @cls with the same @impl_name already exists, it will be replaced.
  */
 void oil_class_add_implement (
@@ -321,10 +321,10 @@ void oil_class_add_implement (
 
 /**
  * oil_class_remove_implement:
- * @cls: #OilClass
+ * @cls: an #OilClass
  * @impl_name: name of the implement, should not be NULL
  *
- * remove implement @impl_name from function class @cls, rarely use
+ * Remove implement @impl_name from function class @cls, rarely use
  * 
  * Returns: 1 on success, 0 on fail
  */
@@ -358,10 +358,10 @@ int oil_class_remove_implement (
 /**
  * oil_class_foreach:
  * @visitor: the function to be called with each class
- * @user_data: data for @visitor
+ * @user_data: user provides data for @visitor
  *
- * For each class, calls @visitor, passes name of class, class itself and @user_data 
- * as the parameters
+ * For each function class, call @visitor, 
+ * pass name of function class, function class itself and @user_data as parameters
  */
 void oil_class_foreach (OilClassVisitor visitor, void *user_data)
 {
@@ -373,11 +373,11 @@ void oil_class_foreach (OilClassVisitor visitor, void *user_data)
  * oil_class_implements_foreach:
  * @cls: #OilClass
  * @visitor: the function to be called with each implement of @cls
- * @user_data: data for @visitor
+ * @user_data: user provides data for @visitor
  *
- * For each implement of function class @cls, call @visitor
+ * For each implement of function class @cls, call @visitor.
  *
- * Returns: NULL or the name of implement that the visitor returns 1 and stops further visit
+ * Returns: NULL or the name of implement when the visitor returns 1 and stops further visit
  */
 char *oil_class_implements_foreach (
         OilClass *cls,
@@ -426,7 +426,7 @@ void *oil_class_implements_get (
  * oil_class_clear_implements:
  * @cls: #OilClass
  *
- * remove all implements of function class @cls
+ * Remove all implements of function class @cls
  *
  * Returns: 1 on success, 0 on fail
  */
@@ -442,8 +442,8 @@ int oil_class_clear_implements (OilClass *cls)
 
 /**
  * oil_class_activate_implement:
- * @cls: #OilClass
- * @impl_name: the name of the implement, NULL means active the reference implement
+ * @cls: an #OilClass
+ * @impl_name: the name of the implement, NULL means activating the reference implement
  *
  * Make @impl_name as the active implement of function class @cls.
  * If @impl_name is NULL, the reference implement is activated.
@@ -467,13 +467,13 @@ void oil_class_activate_implement (OilClass *cls, char *impl_name)
         return;
 
     if (!impl_name) {
-        *cls->pChosen = cls->ref;
+        *cls->slot_p = cls->ref;
         cls->active_impl = NULL;
     } else {
         impl = _class_implements_foreach_internal (cls, (OilImplementVisitor) _cmp_impl_name, impl_name);
         
         if (impl) {
-            *cls->pChosen = impl->impl;
+            *cls->slot_p = impl->impl;
             cls->active_impl = impl;
         }
     }
@@ -481,12 +481,12 @@ void oil_class_activate_implement (OilClass *cls, char *impl_name)
 
 /**
  * oil_class_get_active_implement:
- * @cls: #OilClass
+ * @cls: an #OilClass
  *
  * Retrieve the active implement of function class @cls
  *
  * Returns: an internal string holds the name of the current active implement, 
- * or NULL, which means the reference implement is activated, or @cls is NULL or corrupt
+ * or NULL, which means the reference implement is activated or @cls is NULL or corrupt
  */
 char *oil_class_get_active_implement (OilClass *cls)
 {

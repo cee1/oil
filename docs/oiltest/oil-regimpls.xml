@@ -7,7 +7,7 @@
 
 <refnamediv>
 <refname>oil-regimpls</refname>
-<refpurpose>Auto generate implements register code</refpurpose>
+<refpurpose>Generate code of registering implements</refpurpose>
 </refnamediv>
 
 <refsynopsisdiv>
@@ -19,9 +19,9 @@
 </refsynopsisdiv>
 
 <refsect1><title>Description</title>
-<para><command>oil-regimpls</command> is a utility to generate implement registering code</para>
+<para><command>oil-regimpls</command> is a utility to generate code of registering implements</para>
 <para>
-<command>oil-regimpls</command> will generate a file named "&lt;implements_register_file&gt;_register_implements.c", which contains only one function -- "&lt;implements_register_file&gt;_register_implements ()"
+<command>oil-regimpls</command> will generate a file named "&lt;implements_register_file&gt;-register-implements.c", which contains only one function -- "&lt;implements_register_file&gt;_register_implements ()"
 </para>
 <para>Here is an example of implements register file:</para>
 <example>

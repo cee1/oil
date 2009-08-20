@@ -43,12 +43,13 @@ static gboolean _may_init ();
 
 /**
  * SECTION:test_config
- * @short_description: stack-based test context configurator
+ * @short_description: configure testing context in a stack style
  *
- * oil_test_config is a stack-based configurator to control how the testing is performed.
+ * oil_test_config_* functions compose a stack-based interface
+ * to control how the testing is performed.
  * <note>
  * <para>
- * oiltest only read the configuration variables before performing the actually testing,
+ * oiltest only reads the configuration variables before performing the actual test,
  * so you should call these functions before calling oil_test_optimize_class*
  * </para>
  * </note>
@@ -69,9 +70,9 @@ guint oil_test_config_height ()
 /**
  * oil_test_config_push:
  * @n_params: the number of remaining arguments or -1, 
- * which means the variable-length argument list end with NULL
+ * which means the variable-length argument list is NULL-terminated.
  *
- * Pushes a frame, and modifies some variables, e.g.
+ * Push a frame, and modifies some variables, e.g.
  * |[
  * oil_test_config_push (3, 
  *                       OIL_CONF_OPT_LOG_FD, 0,
@@ -103,7 +104,7 @@ void oil_test_config_push (gint n_params, ...)
 /**
  * oil_test_config_set:
  * @n_params: the number of remaining arguments or -1, 
- * which means the variable-length argument list end with NULL
+ * which means the variable-length argument list ends with NULL
  *
  * Like oil_test_config_push(), but not push any frame.
  */
@@ -119,7 +120,7 @@ void oil_test_config_set (gint n_params, ...)
 /**
  * oil_test_config_get:
  * @n_params: the number of remaining arguments or -1, 
- * which means the variable-length argument list end with NULL
+ * which means the variable-length argument list ends with NULL
  *
  * Get the values of the variables of the top frame, e. g.
  * |[
@@ -355,7 +356,7 @@ void oil_test_config_vget (gint n_params, va_list va_args)
 /**
  * oil_test_config_pop:
  * 
- * Pops up the top frame.
+ * Pop up the top frame.
  */
 void oil_test_config_pop ()
 {
@@ -444,7 +445,7 @@ gdouble oil_test_config_tolerance_low ()
  * oil_test_config_rand:
  * A shortcut of getting the random seed.
  * 
- * Returns: a #GRand
+ * Returns: the internal #GRand, so don't free
  */
 GRand *oil_test_config_rand ()
 {

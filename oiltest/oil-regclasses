@@ -322,8 +322,8 @@ def gen_canonical_id (raw):
 if __name__ == '__main__':
     usage = """usage: %s <classes_def> [--rebuild-register] [--rebuild-attach]
 output: <classes_def>-slots.c            <classes_def>-slots.h
-        <classes_def>-register_classes.c
-        <classes_def>-attach_classes.c   <classes_def>-marshal.c"""
+        <classes_def>-register-classes.c
+        <classes_def>-attach-classes.c   <classes_def>-marshal.c"""
 
     try:
         opts, left = gnu_getopt (sys.argv[1:], 'h', ['rebuild-register', 'rebuild-attach', 'help'])

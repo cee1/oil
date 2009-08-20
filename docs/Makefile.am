@@ -1,2 +1,2 @@
-SUBDIRS = oilcore oiltest
+SUBDIRS = oilcore oiltest oilfuncs
 

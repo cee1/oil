@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+               "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd"
+[
+  <!ENTITY % local.common.attrib "xmlns:xi  CDATA  #FIXED 'http://www.w3.org/2003/XInclude'">
+  <!ENTITY version SYSTEM "../version.xml">
+  <!ENTITY oil_Funcs_Init SYSTEM "xml/oilfuncs_init.xml">
+  <!ENTITY oil_Funcs_Copy SYSTEM "xml/oilfuncs_copy.xml">
+]>
+<book id="index">
+  <bookinfo>
+    <title>oilfuncs Reference Manual</title>
+    <releaseinfo>
+      for oilfuncs &version;
+    </releaseinfo>
+  </bookinfo>
+
+  <chapter>
+    <title>oilfuncs APIs</title>
+    &oil_Funcs_Init;
+    &oil_Funcs_Copy;
+  </chapter>
+  <index>
+    <title>Index</title>
+  </index>
+</book>
