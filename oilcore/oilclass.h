@@ -75,6 +75,11 @@ char *oil_class_implements_foreach (
         OilClass *cls,
         OilImplementVisitor visitor,
         void *user_data);
+void *oil_class_implements_get (
+        OilClass *cls, 
+        char *impl_name, 
+        unsigned int *flags);
+
 void oil_class_activate_implement (OilClass *cls, char *impl_name);
 char *oil_class_get_active_implement (OilClass *cls);
 

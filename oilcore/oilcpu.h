@@ -24,7 +24,8 @@ typedef enum {
 
 #define OIL_FLAG(bit) (1 << (bit))
 
-extern char *oil_flags_descriptions[OIL_FLAGBIT_NR];
+const char *oil_cpu_flag_to_string (unsigned int flag);
+unsigned int oil_cpu_string_to_flag (const char *flag_string);
 
 unsigned int oil_cpu_get_flags ();
 

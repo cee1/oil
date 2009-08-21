@@ -354,7 +354,7 @@ gchar *oil_flags_to_string (guint flags)
     guint i, j;
     for (i = 0, j = 0; i < OIL_FLAGBIT_NR; i++) {
         if (flags & OIL_FLAG(i)) {
-            flagv[j] = oil_flags_descriptions[i];
+            flagv[j] = (gchar *) oil_cpu_flag_to_string (OIL_FLAG(i));
             j++;
         }
     }

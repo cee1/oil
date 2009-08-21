@@ -395,6 +395,34 @@ char *oil_class_implements_foreach (
 }
 
 /**
+ * oil_class_implements_get:
+ * @cls: an #OilClass
+ * @impl_name: an implement of function class @cls
+ * @flags: return the flags of the implement @impl_name, can be NULL
+ *
+ * This function returns information of the implement @impl_name.
+ *
+ * Returns: pointer of the actual function binding with the implement, or NULL if failed
+ */
+void *oil_class_implements_get (
+        OilClass *cls,
+        char *impl_name,
+        unsigned int *flags)
+{
+    OilImplement *impl = NULL;
+    if (!cls || !impl_name) return NULL;
+    
+    if (!(impl = _class_implements_foreach_internal (
+            cls,
+            (OilImplementVisitor) _cmp_impl_name,
+            impl_name)))
+        return NULL;
+
+   if (flags) *flags = impl->flags;
+   return impl->impl; 
+}
+
+/**
  * oil_class_clear_implements:
  * @cls: #OilClass
  *
@@ -419,7 +447,17 @@ int oil_class_clear_implements (OilClass *cls)
  *
  * Make @impl_name as the active implement of function class @cls.
  * If @impl_name is NULL, the reference implement is activated.
- * If no implement with the name @impl_name exists in function class @cls, do nothing
+ * If no implement with the name @impl_name exists in function class @cls, do nothing.
+ * <note><para>
+ *   <informalexample><programlisting>
+ * unsigned int flags;
+ * oil_class_implements_get (cls, impl_name, &flags);
+ * if ((oil_cpu_get_flags () & flags) == flags) {
+ *     oil_class_activate_implement (cls, impl_name);
+ *     /ast; ... ast;/
+ * }
+ *   </programlisting></informalexample>
+ * </para></note>
  */
 void oil_class_activate_implement (OilClass *cls, char *impl_name)
 {
@@ -433,7 +471,7 @@ void oil_class_activate_implement (OilClass *cls, char *impl_name)
         cls->active_impl = NULL;
     } else {
         impl = _class_implements_foreach_internal (cls, (OilImplementVisitor) _cmp_impl_name, impl_name);
-
+        
         if (impl) {
             *cls->pChosen = impl->impl;
             cls->active_impl = impl;
